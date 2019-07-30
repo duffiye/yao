@@ -129,7 +129,7 @@
             },
             refresh() {
                 this.ico = 'el-icon-loading'
-                this.$refs.log.initPage()
+                this.$refs.log.page();
                 setTimeout(() => {
                     this.ico = 'el-icon-refresh'
                 }, 300)

@@ -50,7 +50,7 @@
             parseTime,
             pageInit() {
                 this.pageUrl = 'log/log/page';
-                this.pageInfo.descs = ['id'];
+                this.pageInfo.descs = ['create_time'];
                 this.pageInfo.params = {
                     createBy: this.user.username
                 };

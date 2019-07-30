@@ -49,13 +49,12 @@ export const constantRouterMap = [
         ]
     },
     {
-        path: '/',
+        path: '/userCenter',
         component: Layout,
         hidden: true,
-        redirect: 'noredirect',
         children: [
             {
-                path: 'userCenter',
+                path: '/',
                 component: () => import('@/views/modules/admin/user/center/center'),
                 name: '个人中心',
                 meta: {title: '个人中心', icon: 'user'}
