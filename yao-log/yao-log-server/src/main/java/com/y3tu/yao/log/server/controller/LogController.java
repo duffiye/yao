@@ -10,7 +10,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 日志Controller
@@ -28,8 +31,8 @@ public class LogController extends BaseController<LogService, Log> {
     private LogService logService;
 
     @com.y3tu.yao.log.starter.annotation.Log(serviceId = ServerNameConstants.LOG_SERVER, moduleName = MODULE_NAME, actionName = "日志信息分页查询")
-    @ApiOperation(value = "日志信息分页查询", notes = "日志信息分页查询", httpMethod = "GET")
-    @ApiImplicitParam(name = "pageInfo", value = "日志信息查询类", required = false, dataType = "PageInfo")
+    @ApiOperation(value = "日志信息分页查询", notes = "日志信息分页查询", httpMethod = "POST")
+    @ApiImplicitParam(name = "pageInfo", value = "日志信息查询类", dataType = "PageInfo")
     @PostMapping("/page")
     @Override
     public R page(@RequestBody PageInfo pageInfo) {

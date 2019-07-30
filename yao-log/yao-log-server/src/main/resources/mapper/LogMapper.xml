@@ -26,20 +26,20 @@
     <select id="page" resultMap="LogMap">
         select * from t_log
         <where>
-            <if test="id != '' and id != null">
-                and id = #{id}
+            <if test="params.id != '' and params.id != null">
+                and id = #{params.id}
             </if>
-            <if test="type != '' and type != null">
-                and type = #{type}
+            <if test="params.type != '' and params.type != null">
+                and type = #{params.type}
             </if>
-            <if test="moduleName != '' and moduleName != null">
-                and module_name like concat('%',#{moduleName},'%')
+            <if test="params.moduleName != '' and params.moduleName != null">
+                and module_name like concat('%',#{params.moduleName},'%')
             </if>
-            <if test="createBy != '' and createBy != null">
-                and create_by like concat('%',#{createBy},'%')
+            <if test="params.createBy != '' and params.createBy != null">
+                and create_by like concat('%',#{params.createBy},'%')
             </if>
-            <if test="status != '' and status != null">
-                and status = #{status}
+            <if test="params.status != '' and params.status != null">
+                and status = #{params.status}
             </if>
         </where>
     </select>

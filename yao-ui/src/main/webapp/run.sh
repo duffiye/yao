@@ -31,4 +31,4 @@ docker push y3tu/yao-ui:latest
 echo '镜像推送结束 end...'
 
 #echo 'run docker container'
-#docker run -p 80:80 --name yao-ui -d docker_yao-ui:latest
+#docker run -d -p 8080:80 --name yao-ui -d docker_yao-ui:latest
