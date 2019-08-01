@@ -8,7 +8,6 @@ import com.y3tu.yao.common.vo.ResourceVO;
 import com.y3tu.yao.common.vo.RoleVO;
 import com.y3tu.yao.common.vo.UserVO;
 import com.y3tu.yao.log.starter.annotation.Log;
-import com.y3tu.yao.log.starter.constant.SaveModeEnum;
 import com.y3tu.yao.upms.model.dto.UserDTO;
 import com.y3tu.tool.core.bean.BeanUtil;
 import com.y3tu.tool.core.bean.copier.CopyOptions;
@@ -49,7 +48,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/user")
 @Slf4j
-@Api(description = "用户接口")
+@Api("用户接口")
 public class UserController extends BaseController<UserService, User> {
 
     @Autowired
@@ -67,19 +66,22 @@ public class UserController extends BaseController<UserService, User> {
     @Autowired
     private HttpServletRequest request;
 
+    private final static String MODULE_NAME = "用户模块";
+
     /**
      * 根据传入的token解析获取用户
      *
      * @return
      */
-    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    @GetMapping(value = "/info")
     @ApiOperation(value = "获取当前登录用户接口")
+    @Log(actionName = "获取当前登录用户信息", serviceId = ServerNameConstants.UPMS_SERVER, moduleName = MODULE_NAME)
     public R getUserInfo() {
         String userId = UserUtil.getUserId(request);
         return R.success(userService.findUserById(userId));
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @PostMapping(value = "/register")
     @ApiOperation(value = "注册用户")
     public R register(@ModelAttribute User u,
                       @RequestParam String verify,
@@ -144,7 +146,7 @@ public class UserController extends BaseController<UserService, User> {
     @Override
     @ApiOperation(value = "多条件分页获取用户列表")
     @MethodMapping(method = RequestMethod.POST)
-    @Log(serviceId = ServerNameConstants.BACK_SERVER, moduleName = "User", actionName = "多条件分页获取用户列表",saveMode = SaveModeEnum.DB)
+    @Log(serviceId = ServerNameConstants.UPMS_SERVER, moduleName = MODULE_NAME, actionName = "多条件分页获取用户列表")
     public R page(@RequestBody PageInfo pageInfo) {
 
         PageInfo<User> page = userService.page(pageInfo);
@@ -180,10 +182,9 @@ public class UserController extends BaseController<UserService, User> {
         return R.success(pageInfoCopy);
     }
 
-    @RequestMapping(value = "/disable/{userId}", method = RequestMethod.POST)
+    @GetMapping(value = "/disable/{userId}")
     @ApiOperation(value = "后台禁用用户")
     public R disable(@ApiParam("用户唯一id标识") @PathVariable String userId) {
-
         User user = userService.getById(userId);
         if (user == null) {
             return R.warn("通过userId获取用户失败");
@@ -231,9 +232,9 @@ public class UserController extends BaseController<UserService, User> {
 
         //如果不设置密码 默认密码为123456
         String encryptPass = "";
-        if(StrUtil.isEmpty(userDTO.getPassword())){
+        if (StrUtil.isEmpty(userDTO.getPassword())) {
             encryptPass = new BCryptPasswordEncoder().encode("123456");
-        }else {
+        } else {
             encryptPass = new BCryptPasswordEncoder().encode(userDTO.getPassword());
         }
         userDTO.setPassword(encryptPass);
@@ -247,6 +248,7 @@ public class UserController extends BaseController<UserService, User> {
     }
 
     @PutMapping(value = "/edit")
+    @Log(actionName = "编辑用户信息",serviceId = ServerNameConstants.UPMS_SERVER,moduleName = MODULE_NAME)
     public R edit(@RequestBody UserDTO user) {
 
         User old = userService.getById(user.getId());
@@ -306,8 +308,8 @@ public class UserController extends BaseController<UserService, User> {
      * @return UseVo 对象
      */
     @GetMapping("/findUserByUsername/{username}")
+    @Log(actionName = "通过用户名查询用户及其角色信息和权限",serviceId = ServerNameConstants.UPMS_SERVER,moduleName = MODULE_NAME)
     public UserVO findUserByUsername(@PathVariable String username) {
-
         UserVO userVO = userService.findUserByUsername(username);
         if (userVO != null && userVO.getRoles().size() > 0) {
             List<String> roleCodes = userVO.getRoles().stream().map(role -> role.getRoleCode()).collect(Collectors.toList());
@@ -331,6 +333,7 @@ public class UserController extends BaseController<UserService, User> {
      * @return UseVo 对象
      */
     @GetMapping("/findUserByMobile/{mobile}")
+    @Log(actionName = "通过手机号查询用户及其角色信息", serviceId = ServerNameConstants.UPMS_SERVER, moduleName = MODULE_NAME)
     public UserVO findUserByMobile(@PathVariable String mobile) {
         return userService.findUserByMobile(mobile);
     }

@@ -9,7 +9,6 @@ import com.y3tu.tool.web.base.pojo.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,16 +26,13 @@ public class LogController extends BaseController<LogService, Log> {
 
     private static final String MODULE_NAME = "系统日志模块";
 
-    @Autowired
-    private LogService logService;
-
     @com.y3tu.yao.log.starter.annotation.Log(serviceId = ServerNameConstants.LOG_SERVER, moduleName = MODULE_NAME, actionName = "日志信息分页查询")
     @ApiOperation(value = "日志信息分页查询", notes = "日志信息分页查询", httpMethod = "POST")
     @ApiImplicitParam(name = "pageInfo", value = "日志信息查询类", dataType = "PageInfo")
     @PostMapping("/page")
     @Override
     public R page(@RequestBody PageInfo pageInfo) {
-        return R.success(logService.page(pageInfo));
+        return R.success(service.page(pageInfo));
     }
 
 }

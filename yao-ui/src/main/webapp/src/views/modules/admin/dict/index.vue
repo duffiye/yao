@@ -30,16 +30,16 @@
                                 <el-input
                                         v-model="pageInfo.params.name"
                                         clearable
-                                        style="width: 100px"
-                                />
+                                        style="width: 100px">
+                                </el-input>
                             </el-form-item>
 
                             <el-form-item label="字典编码">
                                 <el-input
                                         v-model="pageInfo.params.code"
                                         clearable
-                                        style="width: 100px"
-                                />
+                                        style="width: 100px">
+                                </el-input>
                             </el-form-item>
 
                             <el-form-item label="类型">
@@ -61,19 +61,18 @@
                     <el-table v-loading="pageLoading" :data="pageInfo.records" size="small" highlight-current-row
                               style="width: 100%;"
                               @current-change="handleCurrentChange">
-                        <el-table-column :show-overflow-tooltip="true" prop="name" label="名称"/>
-                        <el-table-column :show-overflow-tooltip="true" prop="code" label="编码"/>
+                        <el-table-column :show-overflow-tooltip="true" prop="name" label="名称"></el-table-column>
+                        <el-table-column :show-overflow-tooltip="true" prop="code" label="编码"></el-table-column>
                         <el-table-column prop="type" label="类型">
                             <template slot-scope="scope">
-                                <span>{{ scope.row.type==0?'普通字典':'SQL字典' }}</span>
+                                <span>{{ scope.row.type===0?'普通字典':'SQL字典' }}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column :show-overflow-tooltip="true" prop="description" label="描述"/>
+                        <el-table-column :show-overflow-tooltip="true" prop="description" label="描述"></el-table-column>
                         <el-table-column label="操作" width="130px" align="center">
                             <template slot-scope="scope">
-
-                                <el-button type="primary" icon="el-icon-edit" size="mini" @click="doEdit(scope.row)"/>
-
+                                <el-button type="primary" icon="el-icon-edit" size="mini"
+                                           @click="doEdit(scope.row)"></el-button>
                                 <el-popover
                                         :ref="scope.row.id"
                                         placement="top"
@@ -86,7 +85,8 @@
                                                    @click="subDelete(scope.row.id)">确定
                                         </el-button>
                                     </div>
-                                    <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini"/>
+                                    <el-button slot="reference" type="danger" icon="el-icon-delete"
+                                               size="mini"></el-button>
                                 </el-popover>
                             </template>
                         </el-table-column>
@@ -97,7 +97,8 @@
                             style="margin-top: 8px;"
                             layout="total, prev, pager, next, sizes"
                             @size-change="sizeChange"
-                            @current-change="pageChange"/>
+                            @current-change="pageChange">
+                    </el-pagination>
                 </el-card>
             </el-col>
             <el-col :xs="24" :sm="24" :md="14" :lg="14" :xl="14">
@@ -108,10 +109,10 @@
         <el-dialog :visible.sync="dialog" :title="isAdd ? '新增字典' : '编辑字典'" append-to-body width="550px" @close="cancel">
             <el-form ref="form" :model="form" :rules="rules" size="small" label-width="100px">
                 <el-form-item label="字典名称" prop="name">
-                    <el-input v-model="form.name" clearable/>
+                    <el-input v-model="form.name" clearable></el-input>
                 </el-form-item>
                 <el-form-item label="字典编码" prop="code">
-                    <el-input v-model="form.code"/>
+                    <el-input v-model="form.code"></el-input>
                 </el-form-item>
                 <el-form-item label="字典类型" prop="type">
                     <el-select
@@ -124,7 +125,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="描述" prop="description">
-                    <el-input v-model="form.description"/>
+                    <el-input v-model="form.description"></el-input>
                 </el-form-item>
 
             </el-form>

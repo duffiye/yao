@@ -1,6 +1,7 @@
 package com.y3tu.yao.log.server.model.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.y3tu.tool.web.base.entity.BaseEntity;
@@ -32,31 +33,37 @@ public class Log extends BaseEntity {
     /**
      * 模块名
      */
+    @TableField("module_name")
     private String moduleName;
 
     /**
      * 操作名
      */
+    @TableField("action_name")
     private String actionName;
 
     /**
      * 服务ID
      */
+    @TableField("service_id")
     private String serviceId;
 
     /**
      * 操作IP地址
      */
+    @TableField("remote_addr")
     private String remoteAddr;
 
     /**
-     * 用户代理
+     * 用户客户端信息
      */
+    @TableField("user_agent")
     private String userAgent;
 
     /**
      * 请求URI
      */
+    @TableField("request_uri")
     private String requestUri;
 
     /**
@@ -85,20 +92,14 @@ public class Log extends BaseEntity {
     private String delFlag;
 
     /**
-     * 创建者
+     * 调用者
      */
-    private String createBy;
-
+    private String username;
     /**
      * 创建时间
      */
+    @TableField("create_time")
     private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
     /**
      * 操作状态 1 失败  0 成功
      */

@@ -4,6 +4,9 @@ import com.y3tu.yao.log.starter.constant.SaveModeEnum;
 
 import java.lang.annotation.*;
 
+/**
+ * @author y3tu
+ */
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

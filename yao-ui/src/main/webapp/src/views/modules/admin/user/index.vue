@@ -7,7 +7,8 @@
                         <el-input v-model="pageInfo.params.username"
                                   clearable
                                   placeholder="请输入用户名"
-                                  style="width: 200px"/>
+                                  style="width: 200px">
+                        </el-input>
                     </el-form-item>
 
                     <el-form-item label="部门" prop="departmentId">
@@ -28,7 +29,8 @@
                                     v-model="pageInfo.params.mobile"
                                     clearable
                                     placeholder="请输入手机号"
-                                    style="width: 200px"/>
+                                    style="width: 200px">
+                            </el-input>
                         </el-form-item>
 
                         <el-form-item label="邮箱" prop="email">
@@ -37,7 +39,8 @@
                                     v-model="pageInfo.params.email"
                                     clearable
                                     placeholder="请输入邮箱"
-                                    style="width: 200px"/>
+                                    style="width: 200px">
+                            </el-input>
                         </el-form-item>
                         <el-form-item label="用户状态" prop="status">
                             <el-select
@@ -56,7 +59,8 @@
                                     align="right"
                                     type="date"
                                     placeholder="选择日期"
-                                    style="width: 200px"/>
+                                    style="width: 200px">
+                            </el-date-picker>
                         </el-form-item>
                     </span>
 
@@ -100,9 +104,9 @@
         <el-row>
             <!--表格渲染-->
             <el-table v-loading="loading" :data="pageInfo.records" size="small" style="width: 100%;">
-                <el-table-column prop="username" label="用户名"/>
-                <el-table-column prop="mobile" label="电话"/>
-                <el-table-column :show-overflow-tooltip="true" prop="email" label="邮箱"/>
+                <el-table-column prop="username" label="用户名"></el-table-column>
+                <el-table-column prop="mobile" label="电话"></el-table-column>
+                <el-table-column :show-overflow-tooltip="true" prop="email" label="邮箱"></el-table-column>
                 <el-table-column label="部门">
                     <template slot-scope="scope">
                         <div>{{ scope.row.departmentName }}</div>
@@ -110,7 +114,7 @@
                 </el-table-column>
                 <el-table-column label="状态" align="center" prop="status">
                     <template slot-scope="scope">
-                        <span>{{ scope.row.status==0?'正常':'禁用' }}</span>
+                        <span>{{ scope.row.status===0?'正常':'禁用' }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column :show-overflow-tooltip="true" prop="createTime" label="创建日期">
@@ -123,7 +127,7 @@
                                  align="center">
                     <template slot-scope="scope">
 
-                        <el-button type="primary" icon="el-icon-edit" size="mini" @click="edit(scope.row)"/>
+                        <el-button type="primary" icon="el-icon-edit" size="mini" @click="edit(scope.row)"></el-button>
 
                         <el-popover
                                 :ref="scope.row.id"
@@ -137,7 +141,7 @@
                                            @click="subDelete(scope.row.id)">确定
                                 </el-button>
                             </div>
-                            <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini"/>
+                            <el-button slot="reference" type="danger" icon="el-icon-delete" size="mini"></el-button>
                         </el-popover>
                     </template>
                 </el-table-column>
@@ -148,7 +152,8 @@
                     style="margin-top: 8px;"
                     layout="total, prev, pager, next, sizes"
                     @size-change="sizeChange"
-                    @current-change="pageChange"/>
+                    @current-change="pageChange">
+            </el-pagination>
         </el-row>
 
         <user-form ref="form" :is-add="isAdd"></user-form>
@@ -157,7 +162,7 @@
 </template>
 
 <script>
-    import {page,del} from '@/api/user'
+    import {page, del} from '@/api/user'
     import {getDepartmentTree} from '@/api/department'
     import {parseTime} from '@/utils/index'
     import {getDictDataByCode} from '@/api/dict'
@@ -254,8 +259,8 @@
                 this.delLoading = true
                 del(id).then(res => {
                     this.delLoading = false
-                    this.$refs[id].doClose()
-                    this.init()
+                    this.$refs[id].doClose();
+                    this.init();
                     this.$notify({
                         title: '删除成功',
                         type: 'success',
@@ -303,7 +308,7 @@
             clearNullChildren(data) {
                 const _this = this;
                 data.forEach(function (data, index) {
-                    if (data.children == null || data.children == undefined || data.children.length < 1) {
+                    if (data.children === null || data.children === undefined || data.children.length < 1) {
                         delete data.children;
                     } else {
                         _this.clearNullChildren(data.children)

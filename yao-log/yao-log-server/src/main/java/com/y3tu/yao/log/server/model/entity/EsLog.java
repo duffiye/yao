@@ -82,19 +82,14 @@ public class EsLog implements Serializable {
     private String delFlag;
 
     /**
-     * 创建者
+     * 调用者
      */
-    private String createBy;
+    private String username;
 
     /**
      * 创建时间
      */
     private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
 
     /**
      * 操作状态 1 失败  0 成功

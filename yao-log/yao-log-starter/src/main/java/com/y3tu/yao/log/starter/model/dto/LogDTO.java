@@ -45,7 +45,7 @@ public class LogDTO implements Serializable {
     private String remoteAddr;
 
     /**
-     * 用户代理
+     * 用户调用客户端信息
      */
     private String userAgent;
 
@@ -80,19 +80,14 @@ public class LogDTO implements Serializable {
     private String delFlag;
 
     /**
-     * 创建者
+     * 调用者
      */
-    private String createBy;
+    private String username;
 
     /**
      * 创建时间
      */
     private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
 
     /**
      * 操作状态 1 失败  0 成功

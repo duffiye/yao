@@ -18,6 +18,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * 监听日志存储请求
+ *
+ * @author y3tu
  */
 @Slf4j
 @Component
@@ -38,13 +40,13 @@ public class LogReceiveListener {
      */
     @RabbitHandler
     @RabbitListener(queues = LogQueueNameConstant.DB_LOG_QUEUE)
-    public void handlerDB(LogDTO logDTO, Channel channel, Message message){
+    public void handlerDB(LogDTO logDTO, Channel channel, Message message) {
         // 确认消息接受
         Log log = new Log();
         BeanUtils.copyProperties(logDTO, log);
         log.setCreateTime(DateUtil.date());
         logService.save(log);
-        LogReceiveListener.log.info("系统日志消费端成功消费信息：log={}", logDTO);
+        LogReceiveListener.log.info("系统日志 DB 消费端成功消费信息：log={}", logDTO);
 
     }
 
@@ -64,7 +66,7 @@ public class LogReceiveListener {
         BeanUtils.copyProperties(logDTO, esLog);
         esLog.setCreateTime(DateUtil.date());
         esLogService.saveLog(esLog);
-        LogReceiveListener.log.info("系统日志消费端成功消费信息：log={}", logDTO);
+        LogReceiveListener.log.info("系统日志 ES 消费端成功消费信息：log={}", logDTO);
     }
 
 

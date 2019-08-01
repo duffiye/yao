@@ -52,7 +52,7 @@
                 this.pageUrl = 'log/log/page';
                 this.pageInfo.descs = ['create_time'];
                 this.pageInfo.params = {
-                    createBy: this.user.username
+                    username: this.user.username
                 };
                 return true
             }

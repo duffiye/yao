@@ -25,6 +25,11 @@ public interface ServerNameConstants {
      * 后台服务
      */
     String BACK_SERVER = "back-server";
+
+    /**
+     * 通用权限系统
+     */
+    String UPMS_SERVER = "upms-server";
     /**
      * 日志服务
      */

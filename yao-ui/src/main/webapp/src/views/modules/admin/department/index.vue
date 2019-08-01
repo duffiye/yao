@@ -32,7 +32,8 @@
                               placeholder="输入部门名称搜索"
                               prefix-icon="el-icon-search"
                               style="width: 100%;"
-                              class="filter-item"/>
+                              class="filter-item">
+                    </el-input>
                 </div>
                 <el-alert
                         type="warning"
@@ -56,7 +57,8 @@
                         :expand-on-click-node="false"
                         show-checkbox
                         :filter-node-method="filterNode"
-                        @node-click="handleNodeClick"/>
+                        @node-click="handleNodeClick">
+                </el-tree>
             </el-col>
 
             <el-col :span="10" style="margin-left:10px;">

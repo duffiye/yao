@@ -78,7 +78,7 @@ public class LogAspect {
             //通过请求解析token获取当前用户名
             try {
                 String username = UserUtil.getUserName(request);
-                logDto.setCreateBy(username);
+                logDto.setUsername(username);
             } catch (Exception e) {
                 log.error("日志记录获取当前用户名失败", e);
             }
