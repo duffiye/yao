@@ -26,7 +26,7 @@ public class LogController extends BaseController<LogService, Log> {
 
     private static final String MODULE_NAME = "系统日志模块";
 
-    @com.y3tu.yao.log.starter.annotation.Log(serviceId = ServerNameConstants.LOG_SERVER, moduleName = MODULE_NAME, actionName = "日志信息分页查询")
+    @com.y3tu.yao.log.starter.annotation.Log(actionName = "查看用户操作日志信息", serverName = ServerNameConstants.LOG_SERVER, moduleName = MODULE_NAME)
     @ApiOperation(value = "日志信息分页查询", notes = "日志信息分页查询", httpMethod = "POST")
     @ApiImplicitParam(name = "pageInfo", value = "日志信息查询类", dataType = "PageInfo")
     @PostMapping("/page")

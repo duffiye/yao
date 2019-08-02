@@ -12,7 +12,9 @@ import java.util.Date;
 
 
 /**
- * 日志表
+ * 用户操作日志表
+ *
+ * @author y3tu
  */
 @Data
 @Accessors(chain = true)
@@ -24,12 +26,6 @@ public class Log extends BaseEntity {
      */
     @TableId(value = "id", type = IdType.INPUT)
     private String id;
-
-    /**
-     * 日志类型
-     */
-    private String type;
-
     /**
      * 模块名
      */
@@ -41,12 +37,16 @@ public class Log extends BaseEntity {
      */
     @TableField("action_name")
     private String actionName;
-
     /**
-     * 服务ID
+     * 操作类型
      */
-    @TableField("service_id")
-    private String serviceId;
+    @TableField("action_type")
+    private String actionType;
+    /**
+     * 服务名
+     */
+    @TableField("server_name")
+    private String serverName;
 
     /**
      * 操作IP地址

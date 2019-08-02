@@ -1,7 +1,10 @@
 package com.y3tu.yao.upms.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.y3tu.yao.common.constants.ServerNameConstants;
 import com.y3tu.yao.common.enums.DataStatusEnum;
+import com.y3tu.yao.log.starter.annotation.Log;
+import com.y3tu.yao.log.starter.constant.ActionTypeEnum;
 import com.y3tu.yao.upms.model.entity.*;
 import com.y3tu.yao.upms.service.*;
 import com.y3tu.tool.core.date.DateUtil;
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/role")
+@Log(serverName = ServerNameConstants.UPMS_SERVER, moduleName = "角色管理")
 public class RoleController extends BaseController<RoleService, Role> {
 
     @Autowired
@@ -41,6 +45,7 @@ public class RoleController extends BaseController<RoleService, Role> {
 
     @ApiOperation(value = "分页获取角色")
     @PostMapping("/page")
+    @Log(actionName = "查询角色分页数据")
     @Override
     public R page(@RequestBody PageInfo pageInfo) {
         PageInfo<Role> page = service.page(pageInfo);
@@ -62,6 +67,7 @@ public class RoleController extends BaseController<RoleService, Role> {
     }
 
     @RequestMapping(value = "/setDefault", method = RequestMethod.POST)
+    @Log(actionName = "设置或取消默认角色", actionType = ActionTypeEnum.EDIT)
     @ApiOperation(value = "设置或取消默认角色")
     public R setDefault(@RequestParam String id, @RequestParam Boolean isDefault) {
 
@@ -82,6 +88,7 @@ public class RoleController extends BaseController<RoleService, Role> {
      */
     @ApiOperation(value = "保存", httpMethod = "POST")
     @PostMapping("/save")
+    @Log(actionName = "新增角色", actionType = ActionTypeEnum.ADD)
     @Override
     public R save(@RequestBody Role role) {
         role.setCreateTime(DateUtil.date());
@@ -99,6 +106,7 @@ public class RoleController extends BaseController<RoleService, Role> {
      */
     @ApiOperation(value = "更新", httpMethod = "PUT")
     @PutMapping("/update")
+    @Log(actionName = "更新角色", actionType = ActionTypeEnum.EDIT)
     @Override
     public R update(@RequestBody Role role) {
         role.setUpdateTime(DateUtil.date());
@@ -108,6 +116,7 @@ public class RoleController extends BaseController<RoleService, Role> {
 
 
     @RequestMapping(value = "/editRoleResource", method = RequestMethod.POST)
+    @Log(actionName = "编辑角色分配菜单权限", actionType = ActionTypeEnum.EDIT)
     @ApiOperation(value = "编辑角色分配菜单权限")
     public R editRoleResource(@RequestBody Map params) {
 
@@ -127,6 +136,7 @@ public class RoleController extends BaseController<RoleService, Role> {
     }
 
     @RequestMapping(value = "/editRoleDepartment", method = RequestMethod.POST)
+    @Log(actionName = "编辑角色分配数据权限", actionType = ActionTypeEnum.EDIT)
     @ApiOperation(value = "编辑角色分配数据权限")
     public R editRoleDepartment(@RequestBody Map params) {
 
@@ -151,6 +161,7 @@ public class RoleController extends BaseController<RoleService, Role> {
 
     @ApiOperation(value = "批量通过ids删除")
     @DeleteMapping(value = "/delByIds/{ids}")
+    @Log(actionName = "删除角色", actionType = ActionTypeEnum.DELETE)
     @Override
     public R delByIds(@PathVariable String[] ids) {
         for (String id : ids) {

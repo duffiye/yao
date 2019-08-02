@@ -1,8 +1,8 @@
 package com.y3tu.yao.common.util;
 
+import cn.hutool.core.codec.Base64;
 import com.y3tu.yao.common.constants.SecurityConstants;
 import com.y3tu.yao.common.constants.UserConstants;
-import com.y3tu.tool.core.codec.Base64;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;

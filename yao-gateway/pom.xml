@@ -29,12 +29,6 @@
             <version>${y3tu-tool-version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.y3tu</groupId>
-            <artifactId>y3tu-tool-cache</artifactId>
-            <version>${y3tu-tool-version}</version>
-        </dependency>
-
         <!--api网关-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>

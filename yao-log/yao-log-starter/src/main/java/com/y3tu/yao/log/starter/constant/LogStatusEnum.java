@@ -1,19 +1,27 @@
-package com.y3tu.yao.common.enums;
+package com.y3tu.yao.log.starter.constant;
 
 /**
- * @description: 用户状态枚举
+ * 用户操作日志状态枚举
+ *
+ * @author y3tu
+ * @date 2019-08-02
  */
-public enum OperationStatusEnum {
-
+public enum LogStatusEnum {
+    /**
+     * 成功
+     */
     SUCCESS("0", "成功"),
-    FAIL("1","失败");
+    /**
+     * 失败
+     */
+    FAIL("1", "失败");
 
 
     private String code;
 
     private String message;
 
-    OperationStatusEnum(String code, String message) {
+    LogStatusEnum(String code, String message) {
         this.code = code;
         this.message = message;
     }

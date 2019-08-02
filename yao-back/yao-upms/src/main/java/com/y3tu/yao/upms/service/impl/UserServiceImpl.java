@@ -1,5 +1,6 @@
 package com.y3tu.yao.upms.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.y3tu.yao.common.enums.UserStatusEnum;
 import com.y3tu.yao.common.vo.UserVO;
@@ -12,7 +13,6 @@ import com.y3tu.yao.upms.service.ResourceService;
 import com.y3tu.yao.upms.service.RoleService;
 import com.y3tu.yao.upms.service.UserRoleService;
 import com.y3tu.yao.upms.service.UserService;
-import com.y3tu.tool.core.bean.BeanUtil;
 import com.y3tu.tool.core.collection.CollectionUtil;
 import com.y3tu.tool.web.base.service.impl.BaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;

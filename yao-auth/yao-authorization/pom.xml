@@ -12,10 +12,6 @@
     <name>yao-authorization</name>
     <description>授权服务</description>
 
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
-
     <dependencies>
 
         <!--redis缓存-->

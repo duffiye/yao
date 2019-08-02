@@ -6,6 +6,7 @@ import com.y3tu.yao.common.constants.ServerNameConstants;
 import com.y3tu.yao.common.enums.DataStatusEnum;
 import com.y3tu.yao.common.vo.ResourceVO;
 import com.y3tu.yao.log.starter.annotation.Log;
+import com.y3tu.yao.log.starter.constant.ActionTypeEnum;
 import com.y3tu.yao.upms.model.entity.Resource;
 import com.y3tu.yao.upms.model.entity.Role;
 import com.y3tu.yao.upms.model.entity.RoleResource;
@@ -36,10 +37,8 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/resource")
+@Log(serverName = ServerNameConstants.UPMS_SERVER, moduleName = "资源管理")
 public class ResourceController extends BaseController<ResourceService, Resource> {
-
-    private static final String MODULE_NAME = "系统资源模块";
-
 
     @Autowired
     private ResourceService resourceService;
@@ -53,7 +52,7 @@ public class ResourceController extends BaseController<ResourceService, Resource
      *
      * @return
      */
-    @Log(serviceId = ServerNameConstants.BACK_SERVER, moduleName = MODULE_NAME, actionName = "根据token查询当前用户权限的菜单树")
+    @Log(actionName = "根据token查询当前用户权限的菜单树")
     @ApiOperation(value = "获取当前用户的菜单树", notes = "根据token查询当前用户权限的菜单树", httpMethod = "GET")
     @GetMapping("/menu/tree/{userId}")
     public R getMenuTree(@PathVariable("userId") String userId) {
@@ -67,7 +66,7 @@ public class ResourceController extends BaseController<ResourceService, Resource
      *
      * @return
      */
-    @Log(serviceId = ServerNameConstants.BACK_SERVER, moduleName = MODULE_NAME, actionName = "获取所有的菜单树")
+    @Log(actionName = "获取所有的菜单树")
     @ApiOperation(value = "获取当前用户的菜单树", notes = "获取所有的菜单树", httpMethod = "GET")
     @GetMapping("/menu/getAllMenuTree")
     public R getAllMenuTree() {
@@ -81,6 +80,7 @@ public class ResourceController extends BaseController<ResourceService, Resource
      * @return
      */
     @PostMapping(value = "/save")
+    @Log(actionName = "新增资源", actionType = ActionTypeEnum.ADD)
     @Override
     public R save(@RequestBody Resource resource) {
         // 判断拦截请求的操作权限按钮名是否已存在
@@ -104,6 +104,7 @@ public class ResourceController extends BaseController<ResourceService, Resource
      * @return
      */
     @PostMapping(value = "/update")
+    @Log(actionName = "更新资源", actionType = ActionTypeEnum.EDIT)
     @Override
     public R update(@RequestBody Resource resource) {
         // 判断拦截请求的操作权限按钮名是否已存在
@@ -131,6 +132,7 @@ public class ResourceController extends BaseController<ResourceService, Resource
      */
     @ApiOperation(value = "批量通过ids删除")
     @DeleteMapping(value = "/delByIds/{ids}")
+    @Log(actionName = "删除资源", actionType = ActionTypeEnum.DELETE)
     @Override
     public R delByIds(@PathVariable String[] ids) {
         for (String id : ids) {

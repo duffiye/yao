@@ -1,6 +1,8 @@
 package com.y3tu.yao.upms.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.y3tu.tool.core.db.DbUtil;
 import com.y3tu.yao.upms.emums.DictType;
 import com.y3tu.yao.upms.mapper.DictMapper;
 import com.y3tu.yao.upms.model.entity.Dict;
@@ -9,9 +11,7 @@ import com.y3tu.yao.upms.model.entity.DictSql;
 import com.y3tu.yao.upms.service.DictDataService;
 import com.y3tu.yao.upms.service.DictService;
 import com.y3tu.yao.upms.service.DictSqlService;
-import com.y3tu.tool.core.bean.BeanUtil;
 import com.y3tu.tool.core.exception.BusinessException;
-import com.y3tu.tool.db.DbUtil;
 import com.y3tu.tool.web.base.service.impl.BaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

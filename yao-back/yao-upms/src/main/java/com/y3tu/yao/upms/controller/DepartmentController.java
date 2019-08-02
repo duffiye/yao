@@ -1,7 +1,10 @@
 package com.y3tu.yao.upms.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.y3tu.yao.common.constants.ServerNameConstants;
 import com.y3tu.yao.common.enums.DataStatusEnum;
+import com.y3tu.yao.log.starter.annotation.Log;
+import com.y3tu.yao.log.starter.constant.ActionTypeEnum;
 import com.y3tu.yao.upms.model.entity.Department;
 import com.y3tu.yao.upms.model.entity.RoleDepartment;
 import com.y3tu.yao.upms.model.entity.User;
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/department")
+@Log(serverName = ServerNameConstants.UPMS_SERVER,moduleName = "部门管理")
 public class DepartmentController extends BaseController<DepartmentService, Department> {
 
     @Autowired
@@ -65,6 +69,7 @@ public class DepartmentController extends BaseController<DepartmentService, Depa
      * @return
      */
     @MethodMapping(method = RequestMethod.POST)
+    @Log(actionName = "新增部门",actionType = ActionTypeEnum.ADD)
     @Override
     public R save(@RequestBody Department department) {
         departmentService.save(department);
@@ -78,6 +83,7 @@ public class DepartmentController extends BaseController<DepartmentService, Depa
      * @return
      */
     @MethodMapping(method = RequestMethod.POST)
+    @Log(actionName = "更新部门",actionType = ActionTypeEnum.EDIT)
     @Override
     public R update(@RequestBody Department department) {
         departmentService.updateById(department);
@@ -92,6 +98,7 @@ public class DepartmentController extends BaseController<DepartmentService, Depa
      * @return
      */
     @DeleteMapping(value = "/delByIds/{ids}")
+    @Log(actionName = "删除部门",actionType = ActionTypeEnum.DELETE)
     @Override
     public R delByIds(@PathVariable String[] ids) {
         for (String id : ids) {

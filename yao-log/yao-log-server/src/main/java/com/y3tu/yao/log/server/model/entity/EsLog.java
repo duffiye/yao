@@ -22,11 +22,6 @@ public class EsLog implements Serializable {
     private String id = String.valueOf(IdUtil.createSnowflake(1, 1).nextId());
 
     /**
-     * 日志类型
-     */
-    private String type;
-
-    /**
      * 模块名
      */
     private String moduleName;
@@ -35,11 +30,15 @@ public class EsLog implements Serializable {
      * 操作名
      */
     private String actionName;
+    /**
+     * 操作类型
+     */
+    private String actionType;
 
     /**
-     * 服务ID
+     * 服务名
      */
-    private String serviceId;
+    private String serverName;
 
     /**
      * 操作IP地址

@@ -1,7 +1,10 @@
 package com.y3tu.yao.upms.controller;
 
+import com.y3tu.tool.core.http.IpUtil;
 import com.y3tu.tool.core.pojo.R;
-import com.y3tu.tool.http.IpUtil;
+import com.y3tu.yao.common.constants.ServerNameConstants;
+import com.y3tu.yao.log.starter.annotation.Log;
+import com.y3tu.yao.log.starter.constant.ActionTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestController
 @RequestMapping("/common")
+@Log(serverName = ServerNameConstants.UPMS_SERVER, moduleName = "通用查询")
 public class CommonController {
 
     @Autowired
@@ -39,6 +43,7 @@ public class CommonController {
      * @return
      */
     @GetMapping("/getWeather")
+    @Log(actionName = "获取天气信息", actionType = ActionTypeEnum.VIEW)
     public R getWeather(HttpServletRequest request) {
         return R.success(IpUtil.getIpWeatherInfo(IpUtil.getIpAddr(request)));
     }

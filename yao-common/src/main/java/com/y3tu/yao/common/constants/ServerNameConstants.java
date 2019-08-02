@@ -37,5 +37,5 @@ public interface ServerNameConstants {
     /**
      * 代码生成服务
      */
-    String GEN_SERVER = "gen-server";
+    String GENERATOR_SERVER = "generator-server";
 }

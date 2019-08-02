@@ -1,5 +1,7 @@
 package com.y3tu.yao.upms.controller;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.y3tu.yao.common.constants.ServerNameConstants;
 import com.y3tu.yao.common.enums.UserStatusEnum;
@@ -8,9 +10,8 @@ import com.y3tu.yao.common.vo.ResourceVO;
 import com.y3tu.yao.common.vo.RoleVO;
 import com.y3tu.yao.common.vo.UserVO;
 import com.y3tu.yao.log.starter.annotation.Log;
+import com.y3tu.yao.log.starter.constant.ActionTypeEnum;
 import com.y3tu.yao.upms.model.dto.UserDTO;
-import com.y3tu.tool.core.bean.BeanUtil;
-import com.y3tu.tool.core.bean.copier.CopyOptions;
 import com.y3tu.tool.core.collection.CollectionUtil;
 import com.y3tu.tool.core.date.DateUtil;
 import com.y3tu.tool.core.pojo.R;
@@ -49,6 +50,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/user")
 @Slf4j
 @Api("用户接口")
+@Log(serverName = ServerNameConstants.UPMS_SERVER, moduleName = "用户管理")
 public class UserController extends BaseController<UserService, User> {
 
     @Autowired
@@ -66,8 +68,6 @@ public class UserController extends BaseController<UserService, User> {
     @Autowired
     private HttpServletRequest request;
 
-    private final static String MODULE_NAME = "用户模块";
-
     /**
      * 根据传入的token解析获取用户
      *
@@ -75,7 +75,7 @@ public class UserController extends BaseController<UserService, User> {
      */
     @GetMapping(value = "/info")
     @ApiOperation(value = "获取当前登录用户接口")
-    @Log(actionName = "获取当前登录用户信息", serviceId = ServerNameConstants.UPMS_SERVER, moduleName = MODULE_NAME)
+    @Log(actionName = "获取当前登录用户信息")
     public R getUserInfo() {
         String userId = UserUtil.getUserId(request);
         return R.success(userService.findUserById(userId));
@@ -127,6 +127,7 @@ public class UserController extends BaseController<UserService, User> {
 
 
     @PostMapping(value = "/unlock")
+    @Log(actionName = "页面解锁", actionType = ActionTypeEnum.OTHER)
     @ApiOperation(value = "解锁验证密码")
     public R unLock(@RequestBody UserDTO userDTO) {
 
@@ -146,7 +147,7 @@ public class UserController extends BaseController<UserService, User> {
     @Override
     @ApiOperation(value = "多条件分页获取用户列表")
     @MethodMapping(method = RequestMethod.POST)
-    @Log(serviceId = ServerNameConstants.UPMS_SERVER, moduleName = MODULE_NAME, actionName = "多条件分页获取用户列表")
+    @Log(actionName = "查询用户分页数据")
     public R page(@RequestBody PageInfo pageInfo) {
 
         PageInfo<User> page = userService.page(pageInfo);
@@ -183,6 +184,7 @@ public class UserController extends BaseController<UserService, User> {
     }
 
     @GetMapping(value = "/disable/{userId}")
+    @Log(actionName = "后台禁用用户", actionType = ActionTypeEnum.EDIT)
     @ApiOperation(value = "后台禁用用户")
     public R disable(@ApiParam("用户唯一id标识") @PathVariable String userId) {
         User user = userService.getById(userId);
@@ -195,6 +197,7 @@ public class UserController extends BaseController<UserService, User> {
     }
 
     @RequestMapping(value = "/enable/{userId}", method = RequestMethod.POST)
+    @Log(actionName = "后台启用用户", actionType = ActionTypeEnum.EDIT)
     @ApiOperation(value = "后台启用用户")
     public R enable(@ApiParam("用户唯一id标识") @PathVariable String userId) {
 
@@ -209,6 +212,7 @@ public class UserController extends BaseController<UserService, User> {
 
     @ApiOperation(value = "批量通过ids删除")
     @DeleteMapping(value = "/delByIds/{ids}")
+    @Log(actionName = "删除用户", actionType = ActionTypeEnum.DELETE)
     @Override
     public R delByIds(@PathVariable String[] ids) {
         for (String id : ids) {
@@ -220,6 +224,7 @@ public class UserController extends BaseController<UserService, User> {
     }
 
     @PostMapping(value = "/save")
+    @Log(actionName = "新增用户", actionType = ActionTypeEnum.ADD)
     @ApiOperation(value = "添加用户")
     public R save(@RequestBody UserDTO userDTO) {
         if (StrUtil.isBlank(userDTO.getUsername())) {
@@ -248,7 +253,7 @@ public class UserController extends BaseController<UserService, User> {
     }
 
     @PutMapping(value = "/edit")
-    @Log(actionName = "编辑用户信息",serviceId = ServerNameConstants.UPMS_SERVER,moduleName = MODULE_NAME)
+    @Log(actionName = "编辑用户信息", actionType = ActionTypeEnum.EDIT)
     public R edit(@RequestBody UserDTO user) {
 
         User old = userService.getById(user.getId());
@@ -302,13 +307,12 @@ public class UserController extends BaseController<UserService, User> {
 
 
     /**
-     * 通过用户名查询用户及其角色信息和权限
+     * 通过用户名查询用户及其角色信息和权限(服务间调用)
      *
      * @param username 用户名
      * @return UseVo 对象
      */
     @GetMapping("/findUserByUsername/{username}")
-    @Log(actionName = "通过用户名查询用户及其角色信息和权限",serviceId = ServerNameConstants.UPMS_SERVER,moduleName = MODULE_NAME)
     public UserVO findUserByUsername(@PathVariable String username) {
         UserVO userVO = userService.findUserByUsername(username);
         if (userVO != null && userVO.getRoles().size() > 0) {
@@ -327,19 +331,18 @@ public class UserController extends BaseController<UserService, User> {
     }
 
     /**
-     * 通过手机号查询用户及其角色信息
+     * 通过手机号查询用户及其角色信息(服务间调用)
      *
      * @param mobile 手机号
      * @return UseVo 对象
      */
     @GetMapping("/findUserByMobile/{mobile}")
-    @Log(actionName = "通过手机号查询用户及其角色信息", serviceId = ServerNameConstants.UPMS_SERVER, moduleName = MODULE_NAME)
     public UserVO findUserByMobile(@PathVariable String mobile) {
         return userService.findUserByMobile(mobile);
     }
 
     /**
-     * 通过OpenId查询
+     * 通过OpenId查询(服务间调用)
      *
      * @param openId openid
      * @return 对象

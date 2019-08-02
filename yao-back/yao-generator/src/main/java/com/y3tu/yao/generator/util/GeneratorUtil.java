@@ -1,14 +1,14 @@
 package com.y3tu.yao.generator.util;
 
+import cn.hutool.extra.template.Template;
+import cn.hutool.extra.template.TemplateConfig;
+import cn.hutool.extra.template.TemplateEngine;
+import cn.hutool.extra.template.TemplateUtil;
+import com.y3tu.tool.core.db.DataTypeEnum;
 import com.y3tu.tool.core.io.IoUtil;
 import com.y3tu.tool.core.util.CharsetUtil;
 import com.y3tu.tool.core.util.ObjectUtil;
 import com.y3tu.tool.core.util.StrUtil;
-import com.y3tu.tool.db.meta.DataTypeEnum;
-import com.y3tu.tool.extra.template.Template;
-import com.y3tu.tool.extra.template.TemplateConfig;
-import com.y3tu.tool.extra.template.TemplateEngine;
-import com.y3tu.tool.extra.template.TemplateUtil;
 import com.y3tu.yao.generator.exception.GeneratorException;
 import com.y3tu.yao.generator.model.entity.GeneratorConfig;
 import com.y3tu.yao.generator.model.vo.ColumnInfo;
@@ -96,13 +96,14 @@ public class GeneratorUtil {
             map.put("comment",tableInfo.getTableName());
         }
 
-        String className = StrUtil.toCapitalizeCamelCase(tableInfo.getTableName());
+        String className = StrUtil.toCamelCase(tableInfo.getTableName());
+        className = StrUtil.upperFirst(className);
         String caseClassName = StrUtil.toCamelCase(tableInfo.getTableName());
 
         // 判断是否去除表前缀
         if (StrUtil.isNotEmpty(genConfig.getPrefix())) {
-            className = StrUtil.toCapitalizeCamelCase(StrUtil.removePrefix(tableInfo.getTableName(), genConfig.getPrefix()));
             caseClassName = StrUtil.toCamelCase(StrUtil.removePrefix(tableInfo.getTableName(), genConfig.getPrefix()));
+            className = StrUtil.upperFirst(caseClassName);
         }
 
         map.put("className", className);
@@ -130,7 +131,7 @@ public class GeneratorUtil {
             }
 
             String caseColumnName = StrUtil.toCamelCase(column.getName());
-            String capitalColumnName = StrUtil.toCapitalizeCamelCase(column.getName());
+            String capitalColumnName = StrUtil.upperFirst(caseClassName);
 
             listMap.put("columnType", attrType);
             listMap.put("columnName", column.getName());

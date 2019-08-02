@@ -1,17 +1,20 @@
 package com.y3tu.yao.generator.controller;
 
+import cn.hutool.db.meta.Table;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.y3tu.tool.core.db.MetaUtil;
 import com.y3tu.tool.core.io.IoUtil;
 import com.y3tu.tool.core.pojo.R;
 import com.y3tu.tool.core.util.StrUtil;
-import com.y3tu.tool.db.meta.MetaUtil;
-import com.y3tu.tool.db.meta.Table;
+import com.y3tu.yao.common.constants.ServerNameConstants;
 import com.y3tu.yao.generator.exception.GeneratorException;
 import com.y3tu.yao.generator.model.entity.GeneratorConfig;
 import com.y3tu.yao.generator.model.vo.ColumnInfo;
 import com.y3tu.yao.generator.model.vo.TableInfo;
 import com.y3tu.yao.generator.service.GeneratorService;
 import com.y3tu.yao.generator.util.GeneratorUtil;
+import com.y3tu.yao.log.starter.annotation.Log;
+import com.y3tu.yao.log.starter.constant.ActionTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +37,7 @@ import java.util.zip.ZipOutputStream;
 @RestController
 @RequestMapping("generator")
 @Slf4j
+@Log(serverName = ServerNameConstants.GENERATOR_SERVER, moduleName = "代码生成")
 public class GeneratorController {
 
     @Autowired
@@ -48,6 +52,7 @@ public class GeneratorController {
      * @return 表的分页数据
      */
     @PostMapping("/getTables")
+    @Log(actionName = "获取数据源中所有表信息")
     public R getTables(@RequestBody(required = false) String dataSourceId) {
         List<Map> tableList = new ArrayList<>();
         if (StrUtil.isEmpty(dataSourceId)) {
@@ -78,6 +83,7 @@ public class GeneratorController {
      * @return
      */
     @GetMapping("/getGeneratorConfig")
+    @Log(actionName = "获取代码生成配置")
     public R getGeneratorConfig() {
         GeneratorConfig generatorConfig = generatorService.getOne(new QueryWrapper<>());
         return R.success(generatorConfig);
@@ -90,6 +96,7 @@ public class GeneratorController {
      * @return
      */
     @PostMapping("updateGeneratorConfig")
+    @Log(actionName = "更新代码生成配置", actionType = ActionTypeEnum.EDIT)
     public R updateGeneratorConfig(@RequestBody GeneratorConfig generatorConfig) {
         generatorService.updateById(generatorConfig);
         return R.success();
@@ -102,6 +109,7 @@ public class GeneratorController {
      * @return
      */
     @PostMapping(value = "/build")
+    @Log(actionName = "生成代码", actionType = ActionTypeEnum.CALL)
     public void build(@RequestBody List<ColumnInfo> columnInfos, @RequestParam String tableName, HttpServletResponse response) {
 
         Table table = MetaUtil.getTableMeta(dataSource, tableName);
@@ -117,7 +125,7 @@ public class GeneratorController {
             }
         }
 
-        tableInfo.setComment(table.getRemarks());
+        tableInfo.setComment(table.getComment());
         tableInfo.setColumns(columnInfos);
 
         GeneratorConfig generatorConfig = generatorService.getOne(new QueryWrapper<>());

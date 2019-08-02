@@ -9,7 +9,8 @@
         <result property="type" column="type"/>
         <result property="moduleName" column="module_name"/>
         <result property="actionName" column="action_name"/>
-        <result property="serviceId" column="service_id"/>
+        <result property="actionType" column="action_type"/>
+        <result property="serverName" column="server_name"/>
         <result property="remoteAddr" column="remote_addr"/>
         <result property="userAgent" column="user_agent"/>
         <result property="requestUri" column="request_uri"/>
@@ -27,6 +28,9 @@
         <where>
             <if test="params.id != '' and params.id != null">
                 and id = #{params.id}
+            </if>
+            <if test="params.serverName != '' and params.serverName != null">
+                and server_name like concat('%',#{params.serverName},'%')
             </if>
             <if test="params.type != '' and params.type != null">
                 and type = #{params.type}

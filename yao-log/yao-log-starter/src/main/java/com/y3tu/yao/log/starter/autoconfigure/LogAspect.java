@@ -1,15 +1,15 @@
 package com.y3tu.yao.log.starter.autoconfigure;
 
-import com.y3tu.yao.common.enums.OperationStatusEnum;
+import com.y3tu.tool.core.http.IpUtil;
 import com.y3tu.yao.common.util.UserUtil;
 import com.y3tu.yao.log.starter.constant.LogQueueNameConstant;
+import com.y3tu.yao.log.starter.constant.LogStatusEnum;
 import com.y3tu.yao.log.starter.model.dto.LogDTO;
 import com.y3tu.yao.log.starter.constant.SaveModeEnum;
 import com.y3tu.yao.log.starter.annotation.Log;
 import com.y3tu.tool.core.exception.ExceptionUtil;
 import com.y3tu.tool.core.util.JsonUtil;
 import com.y3tu.tool.core.util.StrUtil;
-import com.y3tu.tool.http.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -58,16 +58,30 @@ public class LogAspect {
         Signature signature = pjp.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         Method targetMethod = methodSignature.getMethod();
+        Class clazz = methodSignature.getDeclaringType();
 
         long startTime = System.currentTimeMillis();
         LogDTO logDto = new LogDTO();
         // 需要记录日志存库
         if (targetMethod.isAnnotationPresent(Log.class)) {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-            // 获取注解
+
+            //获取类注解
+            Log logAnnotationClass = (Log) clazz.getAnnotation(Log.class);
+
+            // 获取方式注解
             Log logAnnotation = targetMethod.getAnnotation(Log.class);
-            logDto.setServiceId(logAnnotation.serviceId())
-                    .setModuleName(logAnnotation.moduleName())
+
+            String serverName = logAnnotation.serverName();
+            String moduleName = logAnnotation.moduleName();
+            if (StrUtil.isEmpty(serverName)) {
+                serverName = logAnnotationClass.serverName();
+            }
+            if (StrUtil.isEmpty(moduleName)) {
+                moduleName = logAnnotationClass.moduleName();
+            }
+            logDto.setServerName(serverName)
+                    .setModuleName(moduleName)
                     .setActionName(logAnnotation.actionName())
                     .setParams(JsonUtil.toJson(request.getParameterMap()))
                     .setRemoteAddr(IpUtil.getIpAddr(request))
@@ -85,10 +99,10 @@ public class LogAspect {
         }
         try {
             result = pjp.proceed();
-            logDto.setStatus(OperationStatusEnum.SUCCESS.getCode());
+            logDto.setStatus(LogStatusEnum.SUCCESS.getCode());
         } catch (Throwable e) {
             logDto.setException(ExceptionUtil.getStackTrace(e));
-            logDto.setStatus(OperationStatusEnum.FAIL.getCode());
+            logDto.setStatus(LogStatusEnum.FAIL.getCode());
         }
         // 本次操作用时（毫秒）
         long elapsedTime = System.currentTimeMillis() - startTime;

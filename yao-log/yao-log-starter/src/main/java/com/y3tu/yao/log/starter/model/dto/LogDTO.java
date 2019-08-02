@@ -9,6 +9,8 @@ import java.util.Date;
 
 /**
  * 日志表
+ *
+ * @author y3tu
  */
 @Data
 @Accessors(chain = true)
@@ -20,11 +22,6 @@ public class LogDTO implements Serializable {
     private String id;
 
     /**
-     * 日志类型
-     */
-    private String type;
-
-    /**
      * 模块名
      */
     private String moduleName;
@@ -33,11 +30,14 @@ public class LogDTO implements Serializable {
      * 操作名
      */
     private String actionName;
-
+    /**
+     * 操作类型
+     */
+    private String actionType;
     /**
      * 服务ID
      */
-    private String serviceId;
+    private String serverName;
 
     /**
      * 操作IP地址
