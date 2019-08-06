@@ -83,6 +83,7 @@ public class LogAspect {
             logDto.setServerName(serverName)
                     .setModuleName(moduleName)
                     .setActionName(logAnnotation.actionName())
+                    .setActionType(logAnnotation.actionType().getValue())
                     .setParams(JsonUtil.toJson(request.getParameterMap()))
                     .setRemoteAddr(IpUtil.getIpAddr(request))
                     .setMethod(request.getMethod())
