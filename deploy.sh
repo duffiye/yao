@@ -24,18 +24,15 @@ expect {
 }
 
 # 更新最新的image
-expect "]#" {send "docker pull y3tu/$serverName\n"}
+expect "#" {send "docker pull y3tu/$serverName\n"}
 # 停止旧的容器
-expect "]#" {send "docker kill $serverName \r"}
+expect "#" {send "docker kill $serverName \r"}
 # 删除旧的容器
-expect "]#" {send "docker rm $serverName \r"}
+expect "#" {send "docker rm $serverName \r"}
 # 启动新的容器
-expect "]#" {send "docker run -d -p $serverPort:$serverPort -v /data/logs/$serverName/:/logs/$serverName/ --name $serverName y3tu/$serverName:latest \r"}
+expect "#" {send "docker run -d -p $serverPort:$serverPort -v /data/logs/$serverName/:/logs/$serverName/ --name $serverName y3tu/$serverName:latest \r"}
 
-# 允许用户进行交互
-#interact
-
-expect "]#" {send "exit\n"}
+expect "#" {send "exit\n"}
 expect eof
 EOF
 }

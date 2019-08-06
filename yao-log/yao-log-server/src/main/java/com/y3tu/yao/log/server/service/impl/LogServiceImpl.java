@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 /**
  * 系统日志服务实现类
+ *
+ * @author y3tu
  */
 @Service
 public class LogServiceImpl extends BaseServiceImpl<LogMapper, Log> implements LogService {

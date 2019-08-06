@@ -8,6 +8,8 @@ import com.y3tu.tool.web.base.service.BaseService;
  * <p>
  * 日志表 服务类
  * </p>
+ *
+ * @author y3tu
  */
 public interface LogService extends BaseService<Log> {
 

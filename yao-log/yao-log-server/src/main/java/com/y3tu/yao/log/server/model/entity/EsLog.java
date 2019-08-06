@@ -15,7 +15,7 @@ import java.util.Date;
  * @author y3tu
  */
 @Data
-@Document(indexName = "log", type = "log", shards = 1, replicas = 0, refreshInterval = "-1")
+@Document(indexName = "action-log", type = "action-log", shards = 1, replicas = 0, refreshInterval = "-1")
 public class EsLog implements Serializable {
 
     @ApiModelProperty(value = "唯一标识")
