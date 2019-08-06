@@ -1,7 +1,6 @@
 package com.y3tu.yao.log.server.model.entity;
 
 import com.y3tu.tool.core.util.IdUtil;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.data.elasticsearch.annotations.*;
 
@@ -15,10 +14,9 @@ import java.util.Date;
  * @author y3tu
  */
 @Data
-@Document(indexName = "action-log", type = "action-log", shards = 1, replicas = 0, refreshInterval = "-1")
+@Document(indexName = "log", type = "log", shards = 1, replicas = 0, refreshInterval = "-1")
 public class EsLog implements Serializable {
 
-    @ApiModelProperty(value = "唯一标识")
     private String id = String.valueOf(IdUtil.createSnowflake(1, 1).nextId());
 
     /**

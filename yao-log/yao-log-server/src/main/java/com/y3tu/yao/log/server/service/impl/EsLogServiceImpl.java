@@ -44,19 +44,20 @@ public class EsLogServiceImpl implements EsLogService {
     }
 
     @Override
-    public Page<EsLog> findByCondition(Integer type, String key, SearchDto searchDto, Pageable pageable) {
-        if (type == null && StrUtil.isBlank(key) && StrUtil.isBlank(searchDto.getStartDate())) {
+    public Page<EsLog> findByCondition(Integer actionType, String key, SearchDto searchDto, Pageable pageable) {
+        if (actionType == null && StrUtil.isBlank(key) && StrUtil.isBlank(searchDto.getStartDate())) {
             // 无过滤条件获取全部
             return logDao.findAll(pageable);
-        } else if (type != null && StrUtil.isBlank(key) && StrUtil.isBlank(searchDto.getStartDate())) {
+        } else if (actionType != null && StrUtil.isBlank(key) && StrUtil.isBlank(searchDto.getStartDate())) {
             // 仅有type
-            return logDao.findByType(type, pageable);
+            return logDao.findByActionType(actionType, pageable);
         }
 
         QueryBuilder qb;
 
-        QueryBuilder qb0 = QueryBuilders.termQuery("logType", type);
-        QueryBuilder qb1 = QueryBuilders.multiMatchQuery(key, "name", "requestUrl", "requestType", "requestParam", "username", "ip", "ipInfo");
+        QueryBuilder qb0 = QueryBuilders.termQuery("actionType", actionType);
+        QueryBuilder qb1 = QueryBuilders.multiMatchQuery(key, "moduleName","actionName", "serverName",
+                "remoteAddr", "userAgent", "requestUri", "method", "params","time","exception","username","status");
         // 在有type条件下
         if (StrUtil.isNotBlank(key) && StrUtil.isBlank(searchDto.getStartDate()) && StrUtil.isBlank(searchDto.getEndDate())) {
             // 仅有key
@@ -65,13 +66,13 @@ public class EsLogServiceImpl implements EsLogService {
             // 仅有时间范围
             Long start = DateUtil.parse(searchDto.getStartDate()).getTime();
             Long end = DateUtil.endOfDay(DateUtil.parse(searchDto.getEndDate())).getTime();
-            QueryBuilder qb2 = QueryBuilders.rangeQuery("timeMillis").gte(start).lte(end);
+            QueryBuilder qb2 = QueryBuilders.rangeQuery("createTime").gte(start).lte(end);
             qb = QueryBuilders.boolQuery().must(qb0).must(qb2);
         } else {
             // 两者都有
             Long start = DateUtil.parse(searchDto.getStartDate()).getTime();
             Long end = DateUtil.endOfDay(DateUtil.parse(searchDto.getEndDate())).getTime();
-            QueryBuilder qb2 = QueryBuilders.rangeQuery("timeMillis").gte(start).lte(end);
+            QueryBuilder qb2 = QueryBuilders.rangeQuery("createTime").gte(start).lte(end);
             qb = QueryBuilders.boolQuery().must(qb0).must(qb1).must(qb2);
         }
 

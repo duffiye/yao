@@ -15,10 +15,10 @@ import org.springframework.stereotype.Component;
 public interface EsLogDao extends ElasticsearchRepository<EsLog, String> {
 
     /**
-     * 通过类型获取
+     * 通过操作类型获取
      *
-     * @param type
+     * @param actionType
      * @return
      */
-    Page<EsLog> findByType(Integer type, Pageable pageable);
+    Page<EsLog> findByActionType(Integer actionType, Pageable pageable);
 }

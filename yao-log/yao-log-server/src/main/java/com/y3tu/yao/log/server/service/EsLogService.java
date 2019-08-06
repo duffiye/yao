@@ -15,6 +15,7 @@ public interface EsLogService {
 
     /**
      * 添加日志
+     *
      * @param esLog
      * @return
      */
@@ -22,6 +23,7 @@ public interface EsLogService {
 
     /**
      * 通过id删除日志
+     *
      * @param id
      */
     void deleteLog(String id);
@@ -33,11 +35,12 @@ public interface EsLogService {
 
     /**
      * 分页搜索获取日志
-     * @param type
+     *
+     * @param actionType 操作类型
      * @param key
      * @param searchDto
      * @param pageable
      * @return
      */
-    Page<EsLog> findByCondition(Integer type, String key, SearchDto searchDto, Pageable pageable);
+    Page<EsLog> findByCondition(Integer actionType, String key, SearchDto searchDto, Pageable pageable);
 }
