@@ -16,7 +16,8 @@ create table if not exists t_log
     username    varchar(64)                            null comment '调用人',
     create_time datetime     default CURRENT_TIMESTAMP null comment '创建时间',
     action_type varchar(50)                            null comment '操作类型'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 comment '日志表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 comment '日志表';
 create index log_create_by on t_log (username);
 create index log_create_date on t_log (create_time);
 create index log_request_uri on t_log (request_uri);

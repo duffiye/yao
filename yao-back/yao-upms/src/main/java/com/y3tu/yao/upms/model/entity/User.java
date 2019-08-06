@@ -92,10 +92,6 @@ public class User extends BaseEntity {
      */
     private Integer status;
     /**
-     * 类型
-     */
-    private Integer type;
-    /**
      * 用户名
      */
     private String username;
