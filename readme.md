@@ -48,5 +48,6 @@ yao-log:8999
 ```
 
 ## 编译部署
-* 启动Nacos`sh startup.sh -m standalone`,然后通过浏览器输入`http://127.0.0.1:8848/nacos/`访问Nacos控制台进行服务配置管理
-* 执行`yao-run.sh` 编译打包服务并生成docker镜像后运行
+* 执行`run.sh` 编译打包服务生成镜像并上传docker hub
+* 执行`deploy.sh`远程调用服务器拉取镜像并启动服务
+> server.txt里面存储的是远程服务器的ip、端口、用户名、密码、服务名、服务端口

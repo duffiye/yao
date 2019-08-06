@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
  * <p>
  * feign 调用服务
  * </p>
+ *
+ * @author y3tu
  */
 @FeignClient(name = ServerNameConstants.BACK_SERVER)
 public interface UserService {

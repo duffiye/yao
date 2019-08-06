@@ -4,7 +4,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
- * Created by zhoutaoo on 2018/5/26.
+ * HttpServlet 自定义封装
+ *
+ * @author y3tu
  */
 public class HttpServletRequestAuthWrapper extends HttpServletRequestWrapper {
 

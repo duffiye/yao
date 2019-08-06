@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * 授权服务Controller
+ * @author y3tu
+ */
 @RestController
 public class AuthController {
 

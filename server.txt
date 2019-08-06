@@ -1,0 +1,4 @@
+127.0.0.1|22|root|***|authentication-server|9002
+127.0.0.1|22|root|***|authorization-server|9003
+
+

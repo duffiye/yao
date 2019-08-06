@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.provider.error.WebResponseExceptionTr
 
 /**
  * oauth2异常转换
+ * @author y3tu
  */
 public class CustomWebResponseExceptionTranslator implements WebResponseExceptionTranslator {
 

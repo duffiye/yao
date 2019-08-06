@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * 签权服务Controller
+ *
+ * @author y3tu
+ */
 @RestController
 @Slf4j
 public class AuthenticationController {
@@ -38,6 +43,11 @@ public class AuthenticationController {
         return hasPermission;
     }
 
+    /**
+     * 获取当前登录用户信息
+     *
+     * @return
+     */
     @GetMapping("/user")
     public R user() {
         //获取用户认证信息
