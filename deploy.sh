@@ -15,7 +15,7 @@ func() {
   echo $serverName
   echo $serverPort
   expect <<EOF
-set timeout 60
+set timeout 1000
 
 spawn ssh $user@$ip -p $port
 expect {
@@ -23,12 +23,15 @@ expect {
     "password" {send "$password\n"}
 }
 
-# 更新最新的image
-expect "*#" {send "docker pull y3tu/$serverName\n"}
+
 # 停止旧的容器
 expect "*#" {send "docker kill $serverName \r"}
 # 删除旧的容器
 expect "*#" {send "docker rm $serverName \r"}
+# 删除旧的镜像
+expect "*#" {send "docker rmi y3tu/$serverName:latest \n"}
+# 更新最新的image
+expect "*#" {send "docker pull y3tu/$serverName \n"}
 # 启动新的容器
 expect "*#" {send "docker run -d -p $serverPort:$serverPort -v /data/logs/$serverName/:/logs/$serverName/ --name $serverName y3tu/$serverName:latest \r"}
 
