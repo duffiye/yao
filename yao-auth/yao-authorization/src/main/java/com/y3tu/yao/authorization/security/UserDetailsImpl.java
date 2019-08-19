@@ -1,10 +1,10 @@
 package com.y3tu.yao.authorization.security;
 
+import com.y3tu.tool.core.util.StrUtil;
 import com.y3tu.yao.common.enums.UserStatusEnum;
 import com.y3tu.yao.common.vo.RoleVO;
 import com.y3tu.yao.common.vo.UserVO;
 import lombok.Data;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -63,7 +63,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !StringUtils.equals(UserStatusEnum.LOCK.getCode() + "", status);
+        return !StrUtil.equals(UserStatusEnum.LOCK.getCode() + "", status);
     }
 
     @Override
@@ -73,6 +73,6 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return StringUtils.equals(UserStatusEnum.NORMAL.getCode() + "", status);
+        return StrUtil.equals(UserStatusEnum.NORMAL.getCode() + "", status);
     }
 }
