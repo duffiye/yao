@@ -12,9 +12,9 @@ public interface SecurityConstants {
      */
     String TOKEN_HEADER = "Authorization";
 
-    String CLOUD = "y3tu-cloud";
+    String CLOUD = "yao";
 
-    String CLOUD_PREFIX = "y3tu-cloud-";
+    String CLOUD_PREFIX = "yao-";
 
     /**
      * 用户信息头
@@ -79,7 +79,7 @@ public interface SecurityConstants {
     String SPRING_SECURITY_MOBILE_TOKEN_URL = "/mobile/token";
 
 
-    String REDIS_CODE_PREFIX = "y3tu-cloud-code-";
+    String REDIS_CODE_PREFIX = "yao-code-";
 
     Integer REDIS_CODE_EXPIRE = 60;
 
@@ -95,9 +95,16 @@ public interface SecurityConstants {
     String ROLE_HEADER = "x-role-header";
 
     /**
+     * 登录获取token路径
      * oauth token
      */
     String OAUTH_TOKEN_URL = "/oauth/token";
+
+    /**
+     * 刷新token路径
+     * grant_type
+     */
+    String REFRESH_TOKEN = "refresh_token";
 
     /**
      * 手机登录URL
