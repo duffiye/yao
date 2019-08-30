@@ -31,7 +31,7 @@
                                         <el-input type="text" v-model="loginForm.code" placeholder="请输入验证码">
                                             <template slot="prepend">验证码</template>
                                             <template slot="append">
-                                                <img class="login-code" :src="code.src" @click="refreshCode">
+                                                <img class="login-code" :src="code.src" @click="refreshCode" alt="">
                                             </template>
                                         </el-input>
                                     </el-form-item>
@@ -90,8 +90,10 @@
 </template>
 
 <script>
-    import Config from '@/config'
     import Cookies from 'js-cookie'
+    import {randomLenNum} from '@/utils/util'
+    import Config from '@/config'
+    import {sendMobileCode} from '@/api/login'
     import logo from '@/assets/logo/logo.png'
     import './style.scss'
 
@@ -105,12 +107,13 @@
                     username: 'admin',
                     password: 'admin',
                     code: '',
+                    randomStr: '',
                     rememberMe: false
                 },
                 loginRules: {
                     username: [{required: true, trigger: 'blur', message: '用户名不能为空'}],
                     password: [{required: true, trigger: 'blur', message: '密码不能为空'}],
-                    //code: [{required: true, trigger: 'blur', message: '验证码不能为空'}]
+                    code: [{required: true, trigger: 'blur', message: '验证码不能为空'}]
                 },
                 code: {
                     len: 4,
@@ -152,6 +155,11 @@
         },
         created() {
             this.getCookie()
+            this.$nextTick(() => {
+                this.refreshCode()
+            })
+        },
+        mounted () {
         },
         methods: {
             getCookie() {
@@ -169,7 +177,9 @@
              * 刷新验证码
              */
             refreshCode() {
-
+                //this.loginForm.code = '';
+                this.loginForm.randomStr = randomLenNum(this.code.len, true);
+                this.code.src = Config.baseURL + `/code?randomStr=${this.loginForm.randomStr}`
             },
             submitLogin() {
                 if (this.tabName === "username") {
@@ -201,13 +211,62 @@
                 } else if (this.tabName === "mobile") {
                     //手机号登录
                     this.$refs.mobileForm.validate(valid => {
-                        //todo
+                        if (valid) {
+                            this.$store
+                                .dispatch('LoginByPhone', this.mobileForm)
+                                .then((rep) => {
+                                    console.log(rep)
+                                    if (rep.access_token) {
+                                        this.loading = false;
+                                        this.$router.push({
+                                            path: '/'
+                                        })
+                                    } else {
+                                        this.$message.error(rep.data)
+                                    }
+                                }).catch(() => {
+                                this.loading = false
+                            })
+                        } else {
+                            console.log('error submit!!')
+                            return false
+                        }
                     })
                 }
             },
             //发送短信
             sendMsg() {
+                let me = this;
+                me.$refs.mobileForm.validateField('mobile', (error) => {
+                    if (!error) {
+                        sendMobileCode(me.mobileForm.mobile)
+                            .then(({data}) => {
+                                if (data.status === 'SUCCEED') {
+                                    this.$notify({
+                                        title: '验证码发送成功',
+                                        message: '验证码为:' + data.result,
+                                        type: 'success',
+                                        duration: 6000
+                                    });
+                                    doInterval()
+                                }
+                            })
+                    }
+                });
 
+                function doInterval() {
+                    me.sms.isDisabled = true;
+                    let interval = window.setInterval(function () {
+                        me.sms.btnName = '（' + me.sms.time + '秒）后重新发送';
+                        --me.sms.time;
+                        if (me.sms.time < 0) {
+                            me.sms.btnName = '重新发送';
+                            me.sms.time = 10;
+                            me.sms.isDisabled = false;
+                            window.clearInterval(interval)
+                        }
+                    }, 1000)
+                }
             },
         }
     }

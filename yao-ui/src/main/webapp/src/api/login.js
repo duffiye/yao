@@ -1,21 +1,23 @@
 import request from '@/utils/request'
 import qs from 'qs'
 
-export function login(username, password) {
-    let grantType = 'password'
-    let clientId = 'cloud'
-    let clientSecret = 'cloud'
-    let param = qs.stringify({
+export function login(username, password,randomStr,code) {
+    let grantType = 'password';
+    let clientId = 'cloud';
+    let clientSecret = 'cloud';
+    let param = {
         username: username,
         password: password,
         client_id: clientId,
         client_secret: clientSecret,
-        grant_type: grantType
-    });
+        grant_type: grantType,
+        randomStr:randomStr,
+        code:code
+    };
     return request({
         url: '/token/oauth/token',
         method: 'post',
-        data: param
+        params: param
     })
 }
 

@@ -1,6 +1,5 @@
-import {login, logout, getUserInfo, mobileLogin,refreshToken} from '@/api/login'
-import {getToken, setToken, removeToken, getRefreshToken,setRefreshToken} from '@/utils/auth'
-import {setStore, getStore} from '@/utils/store'
+import {login, logout, getUserInfo, mobileLogin, refreshToken} from '@/api/login'
+import {getToken, setToken, removeToken, getRefreshToken, setRefreshToken} from '@/utils/auth'
 
 const user = {
     state: {
@@ -32,8 +31,10 @@ const user = {
             const username = userInfo.username;
             const password = userInfo.password;
             const rememberMe = userInfo.rememberMe;
+            const randomStr = userInfo.randomStr;
+            const code = userInfo.code;
             return new Promise((resolve, reject) => {
-                login(username, password).then(res => {
+                login(username, password, randomStr, code).then(res => {
                     setToken(res.access_token, rememberMe);
                     setRefreshToken(res.refresh_token);
                     commit('SET_TOKEN', res.access_token);
@@ -60,14 +61,14 @@ const user = {
 
         //手机号验证码登录
         LoginByPhone({commit}, userInfo) {
-            const mobile = userInfo.mobile.trim()
-            const code = userInfo.code.trim()
+            const mobile = userInfo.mobile.trim();
+            const code = userInfo.code.trim();
             return new Promise((resolve, reject) => {
                 mobileLogin(mobile, code).then(response => {
                     if (response.access_token) {
-                        const data = response
-                        setToken(data.access_token)
-                        commit('SET_TOKEN', data.access_token)
+                        const data = response;
+                        setToken(data.access_token);
+                        commit('SET_TOKEN', data.access_token);
                         resolve(response)
                     }
                     resolve(response)
@@ -80,7 +81,7 @@ const user = {
         GetUserInfo({commit}) {
             return new Promise((resolve, reject) => {
                 getUserInfo().then(response => {
-                    const data = response.data
+                    const data = response.data;
                     setUserInfo(data, commit);
                     resolve(response.data)
                 }).catch(error => {
@@ -93,8 +94,8 @@ const user = {
         LogOut({commit, state}) {
             return new Promise((resolve, reject) => {
                 logout({access_token: state.token}).then(() => {
-                    commit('SET_TOKEN', '')
-                    commit('SET_ROLES', [])
+                    commit('SET_TOKEN', '');
+                    commit('SET_ROLES', []);
 
                     removeToken()
                     resolve()
@@ -107,8 +108,8 @@ const user = {
         // 前端 登出
         FedLogOut({commit}) {
             return new Promise(resolve => {
-                commit('SET_TOKEN', '')
-                commit('SET_ROLES', [])
+                commit('SET_TOKEN', '');
+                commit('SET_ROLES', []);
                 removeToken()
                 resolve()
             })
@@ -129,6 +130,6 @@ export const setUserInfo = (user, commit) => {
         commit('SET_ROLES', user.roles)
     }
     commit('SET_USER', user)
-}
+};
 
 export default user
