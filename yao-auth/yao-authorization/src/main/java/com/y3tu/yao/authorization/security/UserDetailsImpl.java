@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * security 用户对象
+ *
  * @author y3tu
  */
 @Data

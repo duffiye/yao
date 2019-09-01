@@ -33,7 +33,7 @@ public interface UserService {
      * @param mobile
      * @return
      */
-    @GetMapping("/user/loadUserByMobile/{mobile}")
+    @GetMapping("/user/findUserByMobile/{mobile}")
     UserVO loadUserByMobile(@PathVariable(value = "mobile") String mobile);
 
     class UserFeignConfig {

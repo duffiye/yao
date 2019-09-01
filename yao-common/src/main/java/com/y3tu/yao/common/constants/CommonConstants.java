@@ -7,14 +7,6 @@ package com.y3tu.yao.common.constants;
  */
 public interface CommonConstants {
     /**
-     * token请求头名称
-     */
-    String TOKEN_HEADER = "Authorization";
-
-
-    String FISHER_REDIS_LIST_LEY = "fisher_client_id_to_access:cloud";
-
-    /**
      * 超级管理员用户名
      */
     String ADMIN_USER_NAME = "admin";
@@ -82,11 +74,5 @@ public interface CommonConstants {
      * 路由信息Redis保存的key
      */
     String ROUTE_KEY = SecurityConstants.CLOUD_PREFIX + "ROUTE_LIST";
-
-
-    /**
-     * 标签 header key
-     */
-    String HEADER_LABEL = "x-label";
 
 }

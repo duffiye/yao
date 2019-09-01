@@ -88,7 +88,7 @@ public class ValidateCodeGatewayFilter implements GlobalFilter {
 
         String key = SecurityConstants.DEFAULT_CODE_KEY + randomStr;
         if (!redisTemplate.hasKey(key)) {
-            throw new ValidateCodeException("验证码已过期");
+            throw new ValidateCodeException("验证码已失效，请重新获取验证码");
         }
 
         Object codeObj = redisTemplate.opsForValue().get(key);
@@ -104,7 +104,6 @@ public class ValidateCodeGatewayFilter implements GlobalFilter {
         }
 
         if (!StrUtil.equals(saveCode, code)) {
-            redisTemplate.delete(key);
             throw new ValidateCodeException("验证码不正确");
         }
 

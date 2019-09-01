@@ -55,8 +55,7 @@ public interface SecurityConstants {
     /**
      * JdbcClientDetailsService 查询语句
      */
-    String BASE_FIND_STATEMENT = "select " + CLIENT_FIELDS
-            + " from t_oauth_client_details";
+    String BASE_FIND_STATEMENT = "select " + CLIENT_FIELDS + " from t_oauth_client_details";
 
     /**
      * 默认的查询语句
@@ -68,32 +67,10 @@ public interface SecurityConstants {
      */
     String DEFAULT_SELECT_STATEMENT = BASE_FIND_STATEMENT + " where client_id = ?";
 
-
-    String SPRING_SECURITY_MOBILE_KEY = "mobile";
-
-    String SPRING_SECURITY_CODE_KEY = "code";
-
     /**
      * 手机验证码登录的地址
      */
-    String SPRING_SECURITY_MOBILE_TOKEN_URL = "/mobile/token";
-
-
-    String REDIS_CODE_PREFIX = "yao-code-";
-
-    Integer REDIS_CODE_EXPIRE = 60;
-
-
-    /**
-     * 基础角色
-     */
-    String BASE_ROLE = "ROLE_USER";
-
-    /**
-     * 角色信息头
-     */
-    String ROLE_HEADER = "x-role-header";
-
+    String MOBILE_TOKEN_URL = "/mobile/token";
     /**
      * 登录获取token路径
      * oauth token
@@ -105,10 +82,13 @@ public interface SecurityConstants {
      * grant_type
      */
     String REFRESH_TOKEN = "refresh_token";
-
     /**
-     * 手机登录URL
+     * 手机验证码redis存储前缀
      */
-    String MOBILE_TOKEN_URL = "/mobile/token";
+    String REDIS_MOBILE_CODE_PREFIX = "yao-mobile-code-";
+    /**
+     * 手机验证码redis失效时间，单位秒
+     */
+    Integer REDIS_MOBILE_CODE_EXPIRE = 60;
 
 }

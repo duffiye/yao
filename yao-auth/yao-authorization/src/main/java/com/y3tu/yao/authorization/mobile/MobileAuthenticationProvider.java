@@ -4,6 +4,7 @@ import com.y3tu.yao.authorization.security.UserDetailsImpl;
 import com.y3tu.yao.authorization.service.UserService;
 import com.y3tu.yao.common.constants.SecurityConstants;
 import com.y3tu.yao.common.vo.UserVO;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -19,20 +20,20 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  * @author y3tu
  */
 @Slf4j
+@Data
 public class MobileAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisTemplate redisTemplate;
 
     @Autowired
     private UserService userService;
-
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         MobileAuthenticationToken mobileAuthenticationToken = (MobileAuthenticationToken) authentication;
         String mobile = mobileAuthenticationToken.getPrincipal().toString();
-        String realCode = redisTemplate.opsForValue().get(SecurityConstants.REDIS_CODE_PREFIX + mobile);
+        Object realCode  = redisTemplate.opsForValue().get(SecurityConstants.REDIS_MOBILE_CODE_PREFIX + mobile);
         String inputCode = authentication.getCredentials().toString();
         // 判断手机的验证码是否存在
         if (realCode == null) {
@@ -40,7 +41,7 @@ public class MobileAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("登录失败，验证码不存在");
         }
         // 判断是否验证码跟redis中存的验证码是否正确
-        if(!inputCode.equalsIgnoreCase(realCode)) {
+        if(!inputCode.equalsIgnoreCase(realCode.toString())) {
             log.debug("登录失败，您输入的验证码不正确");
             throw new BadCredentialsException("登录失败，验证码不正确");
         }

@@ -44,7 +44,8 @@ public class ImageCodeHandler implements HandlerFunction<ServerResponse> {
         BufferedImage image = producer.createImage(text);
         //保存验证码信息
         String randomStr = serverRequest.queryParam("randomStr").get();
-        redisTemplate.opsForValue().set(SecurityConstants.DEFAULT_CODE_KEY+ randomStr, text, 10, TimeUnit.SECONDS);
+        //验证码保存到redis并设置失效时间30秒
+        redisTemplate.opsForValue().set(SecurityConstants.DEFAULT_CODE_KEY+ randomStr, text, 30, TimeUnit.SECONDS);
         // 转换流信息写出
         FastByteArrayOutputStream os = new FastByteArrayOutputStream();
         try {

@@ -214,16 +214,9 @@
                         if (valid) {
                             this.$store
                                 .dispatch('LoginByPhone', this.mobileForm)
-                                .then((rep) => {
-                                    console.log(rep)
-                                    if (rep.access_token) {
-                                        this.loading = false;
-                                        this.$router.push({
-                                            path: '/'
-                                        })
-                                    } else {
-                                        this.$message.error(rep.data)
-                                    }
+                                .then(() => {
+                                    this.loading = false;
+                                    this.$router.push({path: this.redirect || '/'})
                                 }).catch(() => {
                                 this.loading = false
                             })
@@ -240,11 +233,11 @@
                 me.$refs.mobileForm.validateField('mobile', (error) => {
                     if (!error) {
                         sendMobileCode(me.mobileForm.mobile)
-                            .then(({data}) => {
-                                if (data.status === 'SUCCEED') {
+                            .then(res => {
+                                if (res.status === 'SUCCESS') {
                                     this.$notify({
                                         title: '验证码发送成功',
-                                        message: '验证码为:' + data.result,
+                                        message: '验证码为:' + res.data,
                                         type: 'success',
                                         duration: 6000
                                     });

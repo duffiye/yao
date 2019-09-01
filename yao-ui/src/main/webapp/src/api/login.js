@@ -25,9 +25,9 @@ export function login(username, password,randomStr,code) {
  * 根据refreshToken刷新token
  */
 export function refreshToken(refreshToken) {
-    let grantType = 'refresh_token'
-    let clientId = 'cloud'
-    let clientSecret = 'cloud'
+    let grantType = 'refresh_token';
+    let clientId = 'cloud';
+    let clientSecret = 'cloud';
     let param = qs.stringify({
         refresh_token: refreshToken,
         client_id: clientId,
@@ -44,26 +44,26 @@ export function refreshToken(refreshToken) {
 
 export function sendMobileCode(mobile) {
     return request({
-        url: '/back/user/mobile/' + mobile,
+        url: '/token/mobile/' + mobile,
         method: 'get'
     })
 }
 
 export function mobileLogin(mobile, code) {
-    var grantType = 'mobile'
-    var clientId = 'cloud'
-    var clientSecret = 'cloud'
-    var param = qs.stringify({
+    let grantType = 'mobile';
+    let clientId = 'cloud';
+    let clientSecret = 'cloud';
+    let param = {
         mobile: mobile,
         code: code,
         client_id: clientId,
         client_secret: clientSecret,
         grant_type: grantType
-    })
+    };
     return request({
-        url: '/auth/mobile/token',
+        url: '/token/mobile/token',
         method: 'post',
-        data: param
+        params: param
     })
 }
 

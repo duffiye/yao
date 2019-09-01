@@ -135,7 +135,7 @@
 
     <select id="selectUserVoByMobile" resultMap="userVoResultMap">
         <include refid="selectUserVo"/>
-        WHERE `user`.phone = #{mobile}
+        WHERE `user`.mobile = #{mobile}
     </select>
 
     <select id="selectUserVoByOpenId" resultMap="userVoResultMap">

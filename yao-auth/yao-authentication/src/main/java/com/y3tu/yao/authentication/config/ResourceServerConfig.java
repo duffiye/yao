@@ -44,4 +44,5 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         converter.setSigningKey(signingKey);
         return converter;
     }
+
 }

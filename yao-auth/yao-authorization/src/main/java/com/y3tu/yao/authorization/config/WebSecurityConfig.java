@@ -1,11 +1,13 @@
 package com.y3tu.yao.authorization.config;
 
 import com.y3tu.yao.authorization.mobile.MobileAuthenticationFilter;
+import com.y3tu.yao.authorization.mobile.MobileAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -40,6 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests();
         config.antMatchers("/oauth/**").permitAll();
         config.antMatchers("/user/**").permitAll();
+        config.antMatchers("/mobile/**").permitAll();
         config.anyRequest().authenticated()
                 .and().csrf().disable();
     }
@@ -53,6 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
+                .authenticationProvider(mobileAuthenticationProvider())
                 .userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder());
     }
@@ -71,6 +75,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public AuthenticationProvider mobileAuthenticationProvider() {
+        MobileAuthenticationProvider mobileAuthenticationProvider = new MobileAuthenticationProvider();
+        return mobileAuthenticationProvider;
+    }
     /**
      * 自定义登陆过滤器
      * @return

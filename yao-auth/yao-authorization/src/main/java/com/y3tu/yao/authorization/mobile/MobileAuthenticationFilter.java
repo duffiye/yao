@@ -5,7 +5,6 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.util.Assert;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,25 +17,20 @@ import java.io.IOException;
  */
 public class MobileAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-    private String mobileParamter = SecurityConstants.SPRING_SECURITY_MOBILE_KEY;
-    private String codeParamter = SecurityConstants.SPRING_SECURITY_CODE_KEY;
-
-
     private boolean postOnly = true;
 
     public MobileAuthenticationFilter() {
-        super(SecurityConstants.SPRING_SECURITY_MOBILE_TOKEN_URL);
+        super(SecurityConstants.MOBILE_TOKEN_URL);
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
         if (postOnly && !request.getMethod().equals("POST")) {
-            throw new AuthenticationServiceException(
-                    "Authentication method not supported: " + request.getMethod());
+            throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
         }
 
-        String mobile = obtainMobile(request);
-        String code = obtainCode(request);
+        String mobile = request.getParameter("mobile");
+        String code = request.getParameter("code");
 
         if (mobile == null) {
             mobile = "";
@@ -49,8 +43,7 @@ public class MobileAuthenticationFilter extends AbstractAuthenticationProcessing
         mobile = mobile.trim();
         code = code.trim();
 
-        MobileAuthenticationToken authRequest = new MobileAuthenticationToken(
-                mobile, code);
+        MobileAuthenticationToken authRequest = new MobileAuthenticationToken(mobile, code);
 
         // Allow subclasses to set the "details" property
         setDetails(request, authRequest);
@@ -58,37 +51,8 @@ public class MobileAuthenticationFilter extends AbstractAuthenticationProcessing
         return this.getAuthenticationManager().authenticate(authRequest);
     }
 
-    private String obtainCode(HttpServletRequest request) {
-        return request.getParameter(codeParamter);
-
-    }
-
-    private String obtainMobile(HttpServletRequest request) {
-        return request.getParameter(mobileParamter);
-    }
-
-    protected void setDetails(HttpServletRequest request,
-                              MobileAuthenticationToken authRequest) {
+    protected void setDetails(HttpServletRequest request, MobileAuthenticationToken authRequest) {
         authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
-    }
-
-
-    public String getMobileParamter() {
-        return mobileParamter;
-    }
-
-    public void setMobileParamter(String mobileParamter) {
-        Assert.hasText(mobileParamter, "mobileParamter parameter must not be empty or null");
-        this.mobileParamter = mobileParamter;
-    }
-
-    public String getCodeParamter() {
-        return codeParamter;
-    }
-
-    public void setCodeParamter(String codeParamter) {
-        Assert.hasText(codeParamter, "codeParamter parameter must not be empty or null");
-        this.codeParamter = codeParamter;
     }
 
     public boolean isPostOnly() {

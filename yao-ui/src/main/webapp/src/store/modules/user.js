@@ -38,7 +38,7 @@ const user = {
                     setToken(res.access_token, rememberMe);
                     setRefreshToken(res.refresh_token);
                     commit('SET_TOKEN', res.access_token);
-                    commit('SET_LOAD_MENUS', true)
+                    commit('SET_LOAD_MENUS', true);
                     resolve()
                 }).catch(error => {
                     reject(error)
@@ -64,14 +64,15 @@ const user = {
             const mobile = userInfo.mobile.trim();
             const code = userInfo.code.trim();
             return new Promise((resolve, reject) => {
-                mobileLogin(mobile, code).then(response => {
-                    if (response.access_token) {
-                        const data = response;
-                        setToken(data.access_token);
-                        commit('SET_TOKEN', data.access_token);
-                        resolve(response)
+                mobileLogin(mobile, code).then(res => {
+                    if (res.access_token) {
+                        setToken(res.access_token);
+                        setRefreshToken(res.refresh_token);
+                        commit('SET_TOKEN', res.access_token);
+                        commit('SET_LOAD_MENUS', true);
+                        resolve()
                     }
-                    resolve(response)
+                    resolve(res)
                 }).catch(error => {
                     reject(error)
                 })
@@ -97,7 +98,7 @@ const user = {
                     commit('SET_TOKEN', '');
                     commit('SET_ROLES', []);
 
-                    removeToken()
+                    removeToken();
                     resolve()
                 }).catch(error => {
                     reject(error)
