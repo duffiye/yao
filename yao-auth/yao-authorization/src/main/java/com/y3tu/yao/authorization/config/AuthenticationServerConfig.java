@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
@@ -104,16 +105,7 @@ public class AuthenticationServerConfig extends AuthorizationServerConfigurerAda
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         //配置token的数据源、自定义的tokenServices等信息,配置身份认证器，配置认证方式，TokenStore，TokenGranter，OAuth2RequestFactory
 
-
-        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
-        defaultTokenServices.setReuseRefreshToken(isReuseRefreshToken);
-        defaultTokenServices.setSupportRefreshToken(isSupportRefreshToken);
-        defaultTokenServices.setAccessTokenValiditySeconds(accessTokenValiditySeconds);
-        defaultTokenServices.setRefreshTokenValiditySeconds(refreshTokenValiditySeconds);
-        defaultTokenServices.setTokenStore(tokenStore());
-        defaultTokenServices.setTokenEnhancer(tokenEnhancerChain());
-
-        endpoints.tokenServices(defaultTokenServices)
+        endpoints.tokenServices(defaultTokenServices())
                 .authorizationCodeServices(authorizationCodeServices())
                 .approvalStore(approvalStore())
                 // 添加认证异常处理器
@@ -225,6 +217,19 @@ public class AuthenticationServerConfig extends AuthorizationServerConfigurerAda
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         converter.setSigningKey(signingKey);
         return converter;
+    }
+
+    @Bean
+    @Lazy
+    public DefaultTokenServices defaultTokenServices() {
+        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+        defaultTokenServices.setReuseRefreshToken(isReuseRefreshToken);
+        defaultTokenServices.setSupportRefreshToken(isSupportRefreshToken);
+        defaultTokenServices.setAccessTokenValiditySeconds(accessTokenValiditySeconds);
+        defaultTokenServices.setRefreshTokenValiditySeconds(refreshTokenValiditySeconds);
+        defaultTokenServices.setTokenStore(tokenStore());
+        defaultTokenServices.setTokenEnhancer(tokenEnhancerChain());
+        return defaultTokenServices;
     }
 
 }

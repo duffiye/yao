@@ -13,6 +13,8 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 /**
  * @author y3tu
+ * 资源服务
+ * 会根据请求头的token解析此token是否有效
  */
 @Configuration
 @EnableResourceServer
@@ -24,8 +26,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Override
     public void configure(ResourceServerSecurityConfigurer resourceServerSecurityConfigurer) {
         resourceServerSecurityConfigurer
-                .tokenStore(tokenStore())
-                .resourceId("WEBS");
+                .tokenStore(tokenStore());
     }
 
     @Override

@@ -6,12 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestValidator;
-import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -35,9 +33,9 @@ public class MobileAuthenticationSuccessHandler implements AuthenticationSuccess
     @Autowired
     private ClientDetailsService clientDetailsService;
     @Autowired
-    private AuthorizationServerTokenServices authorizationServerTokenServices;
-    @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private DefaultTokenServices tokenServices;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -67,7 +65,7 @@ public class MobileAuthenticationSuccessHandler implements AuthenticationSuccess
         OAuth2Request oAuth2Request = tokenRequest.createOAuth2Request(clientDetails);
 
         OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(oAuth2Request, authentication);
-        OAuth2AccessToken auth2AccessToken = authorizationServerTokenServices.createAccessToken(oAuth2Authentication);
+        OAuth2AccessToken auth2AccessToken = tokenServices.createAccessToken(oAuth2Authentication);
         log.info("登录成功 token: {}", auth2AccessToken.getValue());
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json");
