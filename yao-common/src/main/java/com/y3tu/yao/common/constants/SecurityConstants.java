@@ -12,15 +12,7 @@ public interface SecurityConstants {
      */
     String TOKEN_HEADER = "Authorization";
 
-    String CLOUD = "yao";
-
     String CLOUD_PREFIX = "yao-";
-
-    /**
-     * 用户信息头
-     */
-    String USER_HEADER = "x-user-header";
-
     /**
      * 项目的license
      */
@@ -30,15 +22,6 @@ public interface SecurityConstants {
      * 默认保存code的前缀
      */
     String DEFAULT_CODE_KEY = "DEFAULT_CODE_KEY";
-    /**
-     * 默认生成图形验证码过期时间
-     */
-    int DEFAULT_IMAGE_EXPIRE = 60;
-
-    /**
-     * token-uservo
-     */
-    String TOKEN_USER_DETAIL = "token-user-detail";
 
     /**
      * jwt 加密key

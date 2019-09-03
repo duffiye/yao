@@ -94,6 +94,7 @@
     import {randomLenNum} from '@/utils/util'
     import Config from '@/config'
     import {sendMobileCode} from '@/api/login'
+    import {timeFix} from "@/utils/util"
     import logo from '@/assets/logo/logo.png'
     import './style.scss'
 
@@ -159,7 +160,7 @@
                 this.refreshCode()
             })
         },
-        mounted () {
+        mounted() {
         },
         methods: {
             getCookie() {
@@ -199,7 +200,7 @@
                             }
                             this.$store.dispatch('Login', user).then(() => {
                                 this.loading = false;
-                                this.$router.push({path: this.redirect || '/'})
+                                this.loginSuccess();
                             }).catch(() => {
                                 this.loading = false
                             })
@@ -216,7 +217,7 @@
                                 .dispatch('LoginByPhone', this.mobileForm)
                                 .then(() => {
                                     this.loading = false;
-                                    this.$router.push({path: this.redirect || '/'})
+                                    this.loginSuccess();
                                 }).catch(() => {
                                 this.loading = false
                             })
@@ -260,6 +261,16 @@
                         }
                     }, 1000)
                 }
+            },
+            //登录成功提示信息
+            loginSuccess() {
+                this.$router.push({path: this.redirect || '/'});
+                this.$notify({
+                    title: '欢迎',
+                    message: `${timeFix()}，欢迎回来`,
+                    type: 'success',
+                    duration: 6000
+                });
             },
         }
     }
