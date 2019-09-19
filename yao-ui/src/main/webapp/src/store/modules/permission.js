@@ -140,4 +140,4 @@ let formatTopNav = (aMenu) => {
         navList
     }
 
-}
+};

@@ -4,8 +4,9 @@
   "description": "Yao快速开发脚手架前端",
   "private": true,
   "scripts": {
+    "start": "vue-cli-service serve",
     "dev": "vue-cli-service serve --mode development",
-    "production": "vue-cli-service serve --mode production",
+    "prod": "vue-cli-service serve --mode production",
     "build:prod": "vue-cli-service build --mode production",
     "doc:dev": "vuepress dev docs",
     "doc:build": "vuepress build docs"

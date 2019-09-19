@@ -48,7 +48,6 @@ const user = {
         RefreshToken({commit}) {
             return new Promise((resolve, reject) => {
                 refreshToken(getRefreshToken()).then(res => {
-                    commit('SET_TOKEN', res.access_token);
                     saveLoginData(res);
                     commit('SET_TOKEN', res.access_token);
                     commit('SET_LOAD_MENUS', true);
@@ -80,10 +79,10 @@ const user = {
         // 获取用户信息
         GetUserInfo({commit}) {
             return new Promise((resolve, reject) => {
-                getUserInfo().then(response => {
-                    const data = response.data;
+                getUserInfo().then(res => {
+                    const data = res.data;
                     setUserInfo(data, commit);
-                    resolve(response.data)
+                    resolve(res.data)
                 }).catch(error => {
                     reject(error)
                 })
@@ -126,7 +125,6 @@ const user = {
  * @param res
  */
 function saveLoginData(res) {
-debugger;
     setToken(res.access_token);
     setRefreshToken(res.refresh_token);
     const current = new Date();

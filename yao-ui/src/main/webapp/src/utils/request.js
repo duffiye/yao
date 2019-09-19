@@ -42,8 +42,23 @@ service.interceptors.request.use(
 );
 
 // response拦截器
-service.interceptors.response.use((config) => {
-    return config
+service.interceptors.response.use( response => {
+    if (response.data.status == "ERROR") {
+        Notification.error({
+            message:  response.data.message,
+            duration: 2500
+        });
+        throw new Error(response.data.message);
+    }
+
+    if (response.data.status === 'WARN') {
+        Notification.warning({
+            message: response.data.message,
+            duration: 2500
+        });
+        throw new Error(response.data.message);
+    }
+    return response.data;
 }, (error) => {
     if (error.response) {
         const errorMessage = error.response.data === null ? '系统内部异常，请联系网站管理员' : error.response.data.message;
