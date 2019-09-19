@@ -92,7 +92,6 @@
 <script>
     import Cookies from 'js-cookie'
     import {randomLenNum} from '@/utils/util'
-    import Config from '@/config'
     import {sendMobileCode} from '@/api/login'
     import {timeFix} from "@/utils/util"
     import logo from '@/assets/logo/logo.png'
@@ -180,7 +179,7 @@
             refreshCode() {
                 //this.loginForm.code = '';
                 this.loginForm.randomStr = randomLenNum(this.code.len, true);
-                this.code.src = Config.baseURL + `/code?randomStr=${this.loginForm.randomStr}`
+                this.code.src = process.env.VUE_APP_BASE_API+`code?randomStr=${this.loginForm.randomStr}`
             },
             submitLogin() {
                 if (this.tabName === "username") {

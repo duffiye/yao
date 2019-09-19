@@ -1,5 +1,5 @@
 import {login, logout, getUserInfo, mobileLogin, refreshToken} from '@/api/login'
-import {getToken, setToken, removeToken, getRefreshToken, setRefreshToken} from '@/utils/auth'
+import {getToken, setToken, removeToken, getRefreshToken, setRefreshToken, setTokenExpireTime} from '@/utils/auth'
 
 const user = {
     state: {
@@ -35,8 +35,7 @@ const user = {
             const code = userInfo.code;
             return new Promise((resolve, reject) => {
                 login(username, password, randomStr, code).then(res => {
-                    setToken(res.access_token, rememberMe);
-                    setRefreshToken(res.refresh_token);
+                    saveLoginData(res);
                     commit('SET_TOKEN', res.access_token);
                     commit('SET_LOAD_MENUS', true);
                     resolve()
@@ -50,8 +49,9 @@ const user = {
             return new Promise((resolve, reject) => {
                 refreshToken(getRefreshToken()).then(res => {
                     commit('SET_TOKEN', res.access_token);
-                    setToken(res.access_token);
-                    setRefreshToken(res.refresh_token);
+                    saveLoginData(res);
+                    commit('SET_TOKEN', res.access_token);
+                    commit('SET_LOAD_MENUS', true);
                     resolve()
                 }).catch(error => {
                     reject(error)
@@ -66,8 +66,7 @@ const user = {
             return new Promise((resolve, reject) => {
                 mobileLogin(mobile, code).then(res => {
                     if (res.access_token) {
-                        setToken(res.access_token);
-                        setRefreshToken(res.refresh_token);
+                        saveLoginData(res);
                         commit('SET_TOKEN', res.access_token);
                         commit('SET_LOAD_MENUS', true);
                         resolve()
@@ -97,7 +96,6 @@ const user = {
                 logout({access_token: state.token}).then(() => {
                     commit('SET_TOKEN', '');
                     commit('SET_ROLES', []);
-
                     removeToken();
                     resolve()
                 }).catch(error => {
@@ -122,6 +120,19 @@ const user = {
         }
     }
 };
+
+/**
+ * 保存用户登录token信息
+ * @param res
+ */
+function saveLoginData(res) {
+debugger;
+    setToken(res.access_token);
+    setRefreshToken(res.refresh_token);
+    const current = new Date();
+    const expireTime = current.setTime(current.getTime() + 1000 * res.expires_in);
+    setTokenExpireTime(expireTime);
+}
 
 export const setUserInfo = (user, commit) => {
     // 如果没有任何权限，则赋予一个默认的权限，避免请求死循环

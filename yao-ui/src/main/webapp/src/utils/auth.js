@@ -3,10 +3,8 @@ import Config from '@/config'
 
 
 const TokenKey = Config.TokenKey;
-
-export function getToken() {
-    return Cookies.get(TokenKey)
-}
+const RefreshTokenKey = Config.RefreshTokenKey;
+const TokenExpireTime = Config.TokenExpireTime;
 
 export function setToken(token, rememberMe) {
     if (rememberMe) {
@@ -16,15 +14,27 @@ export function setToken(token, rememberMe) {
     }
 }
 
-export function setRefreshToken(refreshToken) {
-    return Cookies.set(Config.RefreshTokenKey, refreshToken)
+export function getToken() {
+    return Cookies.get(TokenKey)
 }
 
-export function getRefreshToken(refreshToken) {
-    return Cookies.get(Config.RefreshTokenKey)
+export function setTokenExpireTime(tokenExpireTime) {
+    return Cookies.set(TokenExpireTime, tokenExpireTime)
+}
+
+export function getTokenExpireTime() {
+    return Cookies.get(TokenExpireTime)
+}
+
+export function setRefreshToken(refreshToken) {
+    return Cookies.set(RefreshTokenKey, refreshToken)
+}
+
+export function getRefreshToken() {
+    return Cookies.get(RefreshTokenKey)
 }
 
 export function removeToken() {
     Cookies.remove(TokenKey);
-    Cookies.remove(Config.RefreshTokenKey);
+    Cookies.remove(RefreshTokenKey);
 }

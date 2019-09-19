@@ -2,15 +2,6 @@
  * 系统全局配置
  */
 export default {
-
-    /**
-     * 统一请求后端路径
-     */
-    baseURL: "http://132.232.11.210:2019",
-    /**
-     * 模式 DEV:开发 PROD:生产
-     */
-    mode: 'DEV',
     /**
      * 记住密码状态下的token在Cookie中存储的天数，默认1天
      */
@@ -26,17 +17,15 @@ export default {
     /**
      * token key
      */
-    TokenKey: 'YADMIN-TOKEN-KEY',
+    TokenKey: 'YAO-TOKEN-KEY',
     /**
      * refreshToken key
      */
-    RefreshTokenKey: 'YADMIN-REFRESH-TOKEN-KEY',
-
+    RefreshTokenKey: 'YAO-REFRESH-TOKEN-KEY',
     /**
-     * 请求超时时间，毫秒（默认2分钟）
+     * token失效时间
      */
-    timeout: 1200000,
-
+    TokenExpireTime:'YAO-TOKEN-EXPIRE-TIME',
     /**
      * 是否显示 tagsView
      */

@@ -1,141 +1,109 @@
 import axios from 'axios'
-import {Notification, MessageBox} from 'element-ui'
+import {MessageBox,Message} from 'element-ui'
 import store from '@/store'
-import {getToken, getRefreshToken} from '@/utils/auth'
-
-import Config from '@/config'
-import errorCode from '@/const/errorCode'
+import {getToken, getRefreshToken, getTokenExpireTime} from '@/utils/auth'
 
 // 创建axios实例
 const service = axios.create({
-    baseURL: Config.baseURL,// api的base_url
+    baseURL: process.env.VUE_APP_BASE_API,// api的base_url
     //withCredentials: true, // 跨域请求，允许保存cookie
-    timeout: Config.timeout // 请求超时时间
+    timeout: 10000, // 请求超时时间
+    validateStatus(status) {
+        return status === 200
+    }
 });
-
-let reLogin = true;
 
 // request拦截器
-service.interceptors.request.use(config => {
-    if (getToken()) {
-        // 让每个请求携带自定义token 请根据实际情况自行修改
-        config.headers.common['Authorization'] = 'Bearer ' + getToken()
-        // 处理刷新token后重新请求的自定义变量
-        config['refresh_token'] = false;
-    }
-    const headers = config.headers
-    if (headers['content-type'] === 'application/octet-stream;charset=utf-8') {
-        return config.data
-    }
-    // 处理刷新token后重新请求的自定义变量
-    config['refresh_token'] = false;
-    return config
-
-}, error => {
-    console.log(error);
-    Promise.reject(error)
-});
-
-// respone拦截器
-service.interceptors.response.use(
-    response => {
-
-        if (response.data.status == "ERROR") {
-            let code = response.data.code;
-            if (code !== undefined) {
-                if (Config.mode === 'DEV') {
-                    errorCode[code] = response.data.message;
+service.interceptors.request.use(
+    config => {
+        let _config = config
+        try {
+            const expireTime = getTokenExpireTime();
+            if (expireTime) {
+                const left = expireTime - new Date().getTime()
+                const refreshToken = getRefreshToken()
+                if (left < 5 * 60 * 1000 && refreshToken) {
+                    _config = queryRefreshToken(_config, refreshToken)
+                } else {
+                    if (getToken()) {
+                        _config.headers['Authorization'] = 'bearer ' + getToken()
+                    }
                 }
             }
-            Notification.error({
-                message: errorCode[code] || errorCode['default'],
-                duration: 2500
-            });
-            throw new Error(response.data.message);
+        } catch (e) {
+            console.error(e)
         }
-
-        if (response.data.status === 'WARN') {
-            Notification.warning({
-                message: response.data.message,
-                duration: 2500
-            });
-            throw new Error(response.data.message);
-        }
-        return response.data
+        return _config
     },
     error => {
-        if (error.toString().indexOf('Error: timeout') !== -1) {
-            Notification.error({
-                title: '网络请求超时',
-                duration: 2500
-            });
-            return Promise.reject(error)
-        }
-        if (error.toString().indexOf('Error: Network Error') !== -1) {
-            Notification.error({
-                title: '网络请求错误',
-                duration: 2500
-            });
-            return Promise.reject(error)
-        }
-        if (error.toString().indexOf('503') !== -1) {
-            Notification.error({
-                title: '服务暂时不可用，请稍后再试!',
-                duration: 2500
-            });
-            return Promise.reject(error)
-        }
-
-        let message = error.response.data.message;
-        if (message!=null
-            && message!=undefined
-            && message.toString().indexOf("未授权或token过期") !== -1
-            && !error.response.config.refresh_token) {
-            let config = error.response.config;
-            config['refresh_token'] = true;
-            //如果是token过期，首先用refreshToken去刷新token
-            let response = store.dispatch('RefreshToken').then(() => {
-                config.headers.Authorization = 'Bearer ' + getToken();
-                return service(config)
-            }).catch((error) => {
-                if (reLogin) {
-                    reLogin = false;
-                    //跳转到登录页面
-                    MessageBox.confirm(
-                        '登录状态已过期，您可以继续留在该页面，或者重新登录',
-                        '系统提示',
-                        {
-                            confirmButtonText: '重新登录',
-                            cancelButtonText: '取消',
-                            type: 'warning'
-                        }
-                    ).then(() => {
-                        reLogin = true;
-                        store.dispatch('FedLogOut').then(() => {
-                            location.reload() // 为了重新实例化vue-router对象 避免bug
-                        })
-                    }, () => {
-                        reLogin = true;
-                    });
-                }
-            });
-
-            return response;
-
-        } else {
-            let code = error.response.data.code;
-            if (code !== undefined) {
-                if (Config.mode === 'DEV') {
-                    errorCode[code] = error.response.data.message;
-                }
-            }
-            Notification.error({
-                message: errorCode[code] || errorCode['default'],
-                duration: 2500
-            })
-        }
+        console.log(error)
         return Promise.reject(error)
     }
-)
+);
+
+// response拦截器
+service.interceptors.response.use((config) => {
+    return config
+}, (error) => {
+    if (error.response) {
+        const errorMessage = error.response.data === null ? '系统内部异常，请联系网站管理员' : error.response.data.message;
+        switch (error.response.status) {
+            case 404:
+                Message({
+                    message: '很抱歉，资源未找到' || 'Error',
+                    type: 'error',
+                    duration: 5 * 1000
+                })
+                break
+            case 403:
+                Message({
+                    message: '很抱歉，您暂无该操作权限' || 'Error',
+                    type: 'error',
+                    duration: 5 * 1000
+                })
+                break
+            case 401:
+                Message({
+                    message: '很抱歉，认证已失效，请重新登录' || 'Error',
+                    type: 'error',
+                    duration: 5 * 1000
+                })
+                break
+            default:
+                if (errorMessage) {
+                    Message({
+                        message: errorMessage,
+                        type: 'error',
+                        duration: 5 * 1000
+                    })
+                }
+                break
+        }
+    }
+    return Promise.reject(error)
+});
+
+function queryRefreshToken(config) {
+    //如果是token过期，首先用refreshToken去刷新token
+    store.dispatch('RefreshToken').then(() => {
+        config.headers.Authorization = 'Bearer ' + getToken();
+        return config
+    }).catch(error => {
+        //跳转到登录页面
+        MessageBox.confirm(
+            '登录状态已过期，您可以继续留在该页面，或者重新登录',
+            '系统提示',
+            {
+                confirmButtonText: '重新登录',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }
+        ).then(() => {
+            store.dispatch('FedLogOut').then(() => {
+                location.reload();
+            })
+        });
+    });
+}
 
 export default service

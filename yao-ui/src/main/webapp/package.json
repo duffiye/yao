@@ -1,13 +1,12 @@
 {
   "name": "yao-vue",
   "version": "1.0.0",
+  "description": "Yao快速开发脚手架前端",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "start": "npm run serve",
-    "dev": "npm run serve",
-    "show-build": "vue-cli-service build --mode show",
-    "build": "vue-cli-service build",
+    "dev": "vue-cli-service serve --mode development",
+    "production": "vue-cli-service serve --mode production",
+    "build:prod": "vue-cli-service build --mode production",
     "doc:dev": "vuepress dev docs",
     "doc:build": "vuepress build docs"
   },
