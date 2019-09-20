@@ -2,7 +2,7 @@ package com.y3tu.yao.authorization.config;
 
 import com.y3tu.yao.authorization.exception.CustomWebResponseExceptionTranslator;
 import com.y3tu.yao.authorization.security.UserDetailsImpl;
-import com.y3tu.yao.common.constants.SecurityConstants;
+import com.y3tu.yao.common.constants.AuthConstants;
 import com.y3tu.yao.common.constants.UserConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -87,8 +87,8 @@ public class AuthenticationServerConfig extends AuthorizationServerConfigurerAda
     @Bean
     public ClientDetailsService clientDetailsService() {
         JdbcClientDetailsService clientDetailsService = new JdbcClientDetailsService(dataSource);
-        clientDetailsService.setSelectClientDetailsSql(SecurityConstants.DEFAULT_SELECT_STATEMENT);
-        clientDetailsService.setFindClientDetailsSql(SecurityConstants.DEFAULT_FIND_STATEMENT);
+        clientDetailsService.setSelectClientDetailsSql(AuthConstants.DEFAULT_SELECT_STATEMENT);
+        clientDetailsService.setFindClientDetailsSql(AuthConstants.DEFAULT_FIND_STATEMENT);
         return clientDetailsService;
     }
 
@@ -192,7 +192,7 @@ public class AuthenticationServerConfig extends AuthorizationServerConfigurerAda
     public TokenEnhancer tokenEnhancer() {
         return (accessToken, authentication) -> {
             final Map<String, Object> additionalInfo = new HashMap<>(2);
-            additionalInfo.put("license", SecurityConstants.LICENSE);
+            additionalInfo.put("license", AuthConstants.LICENSE);
             Object principal = authentication.getUserAuthentication().getPrincipal();
             if (principal instanceof UserDetailsImpl) {
                 UserDetailsImpl user = (UserDetailsImpl) principal;

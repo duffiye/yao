@@ -179,7 +179,7 @@
             refreshCode() {
                 //this.loginForm.code = '';
                 this.loginForm.randomStr = randomLenNum(this.code.len, true);
-                this.code.src = process.env.VUE_APP_BASE_API+`code?randomStr=${this.loginForm.randomStr}`
+                this.code.src = process.env.VUE_APP_BASE_API+`token/captcha?randomStr=${this.loginForm.randomStr}`
             },
             submitLogin() {
                 if (this.tabName === "username") {

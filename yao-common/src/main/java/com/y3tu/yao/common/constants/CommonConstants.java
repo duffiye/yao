@@ -73,6 +73,6 @@ public interface CommonConstants {
     /**
      * 路由信息Redis保存的key
      */
-    String ROUTE_KEY = SecurityConstants.CLOUD_PREFIX + "ROUTE_LIST";
+    String ROUTE_KEY = AuthConstants.CLOUD_PREFIX + "ROUTE_LIST";
 
 }

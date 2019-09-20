@@ -1,6 +1,6 @@
 package com.y3tu.yao.authorization.mobile;
 
-import com.y3tu.yao.common.constants.SecurityConstants;
+import com.y3tu.yao.common.constants.AuthConstants;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -20,7 +20,7 @@ public class MobileAuthenticationFilter extends AbstractAuthenticationProcessing
     private boolean postOnly = true;
 
     public MobileAuthenticationFilter() {
-        super(SecurityConstants.MOBILE_TOKEN_URL);
+        super(AuthConstants.MOBILE_TOKEN_URL);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.y3tu.yao.common.util;
 
 import cn.hutool.core.codec.Base64;
-import com.y3tu.yao.common.constants.SecurityConstants;
+import com.y3tu.yao.common.constants.AuthConstants;
 import com.y3tu.yao.common.constants.UserConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -26,7 +26,7 @@ public class UserUtil {
      */
     public static String getToken(HttpServletRequest request) {
         String token = "";
-        String authorization = request.getHeader(SecurityConstants.TOKEN_HEADER);
+        String authorization = request.getHeader(AuthConstants.TOKEN_HEADER);
         if (authorization != null) {
             token = authorization.split(" ")[1];
         }
@@ -46,7 +46,7 @@ public class UserUtil {
      */
     public static Claims getClaims(String token) {
 
-        String key = Base64.encode(SecurityConstants.SIGN_KEY.getBytes());
+        String key = Base64.encode(AuthConstants.SIGN_KEY.getBytes());
         Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
         return claims;
     }

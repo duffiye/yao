@@ -6,7 +6,7 @@ package com.y3tu.yao.common.constants;
  * @author y3tu
  * @date 2019-05-03
  */
-public interface SecurityConstants {
+public interface AuthConstants {
     /**
      * token的header key
      */
@@ -19,10 +19,17 @@ public interface SecurityConstants {
     String LICENSE = "made by y3tu";
 
     /**
-     * 默认保存code的前缀
+     * 验证码redis key
      */
-    String DEFAULT_CODE_KEY = "DEFAULT_CODE_KEY";
-
+    String VALIDATE_CODE_KEY = "VALIDATE_CODE_KEY";
+    /**
+     * 验证码类型 gif类型
+     */
+    String VALIDATE_CODE_TYPE_GIF = "gif";
+    /**
+     * 验证码类型 png类型
+     */
+    String VALIDATE_CODE_TYPE_PNG = "png";
     /**
      * jwt 加密key
      */

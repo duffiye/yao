@@ -2,6 +2,7 @@ import axios from 'axios'
 import {MessageBox,Message} from 'element-ui'
 import store from '@/store'
 import {getToken, getRefreshToken, getTokenExpireTime} from '@/utils/auth'
+import {isNotEmpty} from '@/utils/validate'
 
 // 创建axios实例
 const service = axios.create({
@@ -44,22 +45,49 @@ service.interceptors.request.use(
 // response拦截器
 service.interceptors.response.use( response => {
     if (response.data.status == "ERROR") {
-        Notification.error({
-            message:  response.data.message,
-            duration: 2500
+        Message({
+            message: response.data.message,
+            type: 'error',
+            duration: 5 * 1000
         });
         throw new Error(response.data.message);
     }
 
     if (response.data.status === 'WARN') {
-        Notification.warning({
+        Message({
             message: response.data.message,
-            duration: 2500
+            type: 'warning',
+            duration: 5 * 1000
         });
         throw new Error(response.data.message);
     }
     return response.data;
 }, (error) => {
+    if (error.toString().indexOf('Error: timeout') !== -1) {
+        Message({
+            message: '网络请求超时',
+            type: 'error',
+            duration: 5 * 1000
+        });
+        return Promise.reject(error)
+    }
+    if (error.toString().indexOf('Error: Network Error') !== -1) {
+        Message({
+            message: '网络请求错误',
+            type: 'error',
+            duration: 5 * 1000
+        });
+        return Promise.reject(error)
+    }
+    if (error.toString().indexOf('503') !== -1) {
+        Message({
+            message: '服务暂时不可用，请稍后再试!' || 'Error',
+            type: 'error',
+            duration: 5 * 1000
+        });
+        return Promise.reject(error)
+    }
+
     if (error.response) {
         const errorMessage = error.response.data === null ? '系统内部异常，请联系网站管理员' : error.response.data.message;
         switch (error.response.status) {
@@ -68,22 +96,22 @@ service.interceptors.response.use( response => {
                     message: '很抱歉，资源未找到' || 'Error',
                     type: 'error',
                     duration: 5 * 1000
-                })
-                break
+                });
+                break;
             case 403:
                 Message({
                     message: '很抱歉，您暂无该操作权限' || 'Error',
                     type: 'error',
                     duration: 5 * 1000
-                })
-                break
+                });
+                break;
             case 401:
                 Message({
-                    message: '很抱歉，认证已失效，请重新登录' || 'Error',
+                    message: isNotEmpty(errorMessage)?errorMessage:'很抱歉，用户名密码错误或者认证已失效，请重新登录',
                     type: 'error',
                     duration: 5 * 1000
-                })
-                break
+                });
+                break;
             default:
                 if (errorMessage) {
                     Message({

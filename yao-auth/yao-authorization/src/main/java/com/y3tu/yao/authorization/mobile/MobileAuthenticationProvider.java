@@ -2,7 +2,7 @@ package com.y3tu.yao.authorization.mobile;
 
 import com.y3tu.yao.authorization.security.UserDetailsImpl;
 import com.y3tu.yao.authorization.service.UserService;
-import com.y3tu.yao.common.constants.SecurityConstants;
+import com.y3tu.yao.common.constants.AuthConstants;
 import com.y3tu.yao.common.vo.UserVO;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class MobileAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         MobileAuthenticationToken mobileAuthenticationToken = (MobileAuthenticationToken) authentication;
         String mobile = mobileAuthenticationToken.getPrincipal().toString();
-        Object realCode  = redisTemplate.opsForValue().get(SecurityConstants.REDIS_MOBILE_CODE_PREFIX + mobile);
+        Object realCode  = redisTemplate.opsForValue().get(AuthConstants.REDIS_MOBILE_CODE_PREFIX + mobile);
         String inputCode = authentication.getCredentials().toString();
         // 判断手机的验证码是否存在
         if (realCode == null) {
