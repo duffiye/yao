@@ -163,9 +163,9 @@
         },
         methods: {
             getCookie() {
-                const username = Cookies.get('username')
-                let password = Cookies.get('password')
-                const rememberMe = Cookies.get('rememberMe')
+                const username = Cookies.get('username');
+                let password = Cookies.get('password');
+                const rememberMe = Cookies.get('rememberMe');
                 password = password === undefined ? this.loginForm.password : password
                 this.loginForm = {
                     username: username === undefined ? this.loginForm.username : username,

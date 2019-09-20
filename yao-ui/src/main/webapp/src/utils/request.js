@@ -22,7 +22,7 @@ service.interceptors.request.use(
             const expireTime = getTokenExpireTime();
             if (expireTime) {
                 const left = expireTime - new Date().getTime()
-                const refreshToken = getRefreshToken()
+                const refreshToken = getRefreshToken();
                 if (left < 5 * 60 * 1000 && refreshToken) {
                     _config = queryRefreshToken(_config, refreshToken)
                 } else {
@@ -37,14 +37,14 @@ service.interceptors.request.use(
         return _config
     },
     error => {
-        console.log(error)
+        console.log(error);
         return Promise.reject(error)
     }
 );
 
 // response拦截器
 service.interceptors.response.use( response => {
-    if (response.data.status == "ERROR") {
+    if (response.data.status === "ERROR") {
         Message({
             message: response.data.message,
             type: 'error',
@@ -93,14 +93,14 @@ service.interceptors.response.use( response => {
         switch (error.response.status) {
             case 404:
                 Message({
-                    message: '很抱歉，资源未找到' || 'Error',
+                    message: '很抱歉，资源未找到',
                     type: 'error',
                     duration: 5 * 1000
                 });
                 break;
             case 403:
                 Message({
-                    message: '很抱歉，您暂无该操作权限' || 'Error',
+                    message: '很抱歉，您暂无该操作权限',
                     type: 'error',
                     duration: 5 * 1000
                 });

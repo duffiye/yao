@@ -63,7 +63,7 @@ public class AuthController {
         Object originCode  = redisTemplate.opsForValue().get(AuthConstants.REDIS_MOBILE_CODE_PREFIX + mobile);
         if(originCode != null) {
             log.info("手机号{}验证码{}尚未失效，请失效后再申请。", mobile, originCode);
-            return R.error("验证码尚未失效");
+            return R.error("验证码尚未失效:"+originCode);
         }
         UserVO userVO = userService.loadUserByMobile(mobile);
         if(userVO == null) {

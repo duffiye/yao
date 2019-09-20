@@ -1,5 +1,6 @@
 package com.y3tu.yao.authorization.config;
 
+import com.y3tu.yao.authorization.filter.ValidateCodeFilter;
 import com.y3tu.yao.authorization.mobile.MobileAuthenticationFilter;
 import com.y3tu.yao.authorization.mobile.MobileAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * @author y3tu
@@ -28,6 +30,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
+    private ValidateCodeFilter validateCodeFilter;
+    @Autowired
     UserDetailsService userDetailsService;
     @Autowired
     private AuthenticationSuccessHandler authenticationSuccessHandler;
@@ -37,12 +41,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config
-                = http.requestMatchers().anyRequest()
+                = http.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
+                .requestMatchers().anyRequest()
                 .and()
                 .authorizeRequests();
         config.antMatchers("/oauth/**").permitAll();
         config.antMatchers("/user/**").permitAll();
         config.antMatchers("/mobile/**").permitAll();
+        config.antMatchers("/captcha").permitAll();
         config.anyRequest().authenticated()
                 .and().csrf().disable();
     }
