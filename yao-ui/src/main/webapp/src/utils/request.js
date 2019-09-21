@@ -8,7 +8,7 @@ import {isNotEmpty} from '@/utils/validate'
 const service = axios.create({
     baseURL: process.env.VUE_APP_BASE_API,// api的base_url
     //withCredentials: true, // 跨域请求，允许保存cookie
-    timeout: 10000, // 请求超时时间
+    timeout: 60000, // 请求超时时间
     validateStatus(status) {
         return status === 200
     }
@@ -17,11 +17,15 @@ const service = axios.create({
 // request拦截器
 service.interceptors.request.use(
     config => {
-        let _config = config
+        let _config = config;
+        //如果是请求或者刷新token请求直接放行
+        if(config.url==="/token/oauth/token"){
+            return _config;
+        }
         try {
             const expireTime = getTokenExpireTime();
             if (expireTime) {
-                const left = expireTime - new Date().getTime()
+                const left = expireTime - new Date().getTime();
                 const refreshToken = getRefreshToken();
                 if (left < 5 * 60 * 1000 && refreshToken) {
                     _config = queryRefreshToken(_config, refreshToken)
@@ -113,7 +117,7 @@ service.interceptors.response.use( response => {
                 });
                 break;
             default:
-                if (errorMessage) {
+                if (errorMessage&&errorMessage!=='无效token') {
                     Message({
                         message: errorMessage,
                         type: 'error',

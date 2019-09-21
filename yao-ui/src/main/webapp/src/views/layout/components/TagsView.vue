@@ -46,7 +46,7 @@ export default {
   },
   watch: {
     $route() {
-      this.addViewTags()
+      this.addViewTags();
       this.moveToCurrentTag()
     },
     visible(value) {
@@ -58,7 +58,7 @@ export default {
     }
   },
   mounted() {
-    this.initTags()
+    this.initTags();
     this.addViewTags()
   },
   methods: {
@@ -66,7 +66,7 @@ export default {
       return route.path === this.$route.path
     },
     filterAffixTags(routes, basePath = '/') {
-      let tags = []
+      let tags = [];
       routes.forEach(route => {
         if (route.meta && route.meta.affix) {
           const tagPath = path.resolve(basePath, route.path)
@@ -96,7 +96,7 @@ export default {
       }
     },
     addViewTags() {
-      const { name } = this.$route
+      const { name } = this.$route;
       if (name) {
         this.$store.dispatch('addView', this.$route)
       }
@@ -121,7 +121,7 @@ export default {
     },
     refreshSelectedTag(view) {
       this.$store.dispatch('delCachedView', view).then(() => {
-        const { fullPath } = view
+        const { fullPath } = view;
         this.$nextTick(() => {
           this.$router.replace({
             path: '/redirect' + fullPath
@@ -182,9 +182,9 @@ export default {
       } else {
         this.left = left
       }
-      this.top = e.clientY
+      this.top = e.clientY;
 
-      this.visible = true
+      this.visible = true;
       this.selectedTag = tag
     },
     closeMenu() {

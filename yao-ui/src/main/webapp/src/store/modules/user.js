@@ -53,6 +53,7 @@ const user = {
                     commit('SET_LOAD_MENUS', true);
                     resolve()
                 }).catch(error => {
+                    console.log(error);
                     reject(error)
                 })
             })

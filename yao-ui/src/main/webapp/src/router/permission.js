@@ -7,17 +7,17 @@ import {getToken} from '@/utils/auth' // getToken from cookie
 
 NProgress.configure({showSpinner: false})// NProgress Configuration
 
-const whiteList = ['/login']// no redirect whitelist
+const whiteList = ['/login'];// no redirect whitelist
 
 router.beforeEach((to, from, next) => {
     if (to.meta.title) {
         document.title = to.meta.title + ' - ' + Config.webName
     }
-    NProgress.start() // start progress bar
+    NProgress.start();// start progress bar
     if (getToken()) {
         // 已登录且要跳转的页面是登录页
         if (to.path === '/login') {
-            next({path: '/'})
+            next({path: '/'});
             NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it
         } else {
             // 判断当前用户是否已拉取完user_info信息
@@ -42,9 +42,9 @@ router.beforeEach((to, from, next) => {
             NProgress.done()
         }
     }
-})
+});
 
 
 router.afterEach(() => {
     NProgress.done() // finish progress bar
-})
+});

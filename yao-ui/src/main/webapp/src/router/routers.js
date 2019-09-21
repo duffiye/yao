@@ -24,17 +24,17 @@ export const constantRouterMap = [
         component: () => import('@/views/error/401'),
         hidden: true
     },
-    // {
-    //     path: '/redirect',
-    //     component: Layout,
-    //     hidden: true,
-    //     children: [
-    //         {
-    //             path: '/redirect/:path*',
-    //             component: () => import('@/views/redirect/index')
-    //         }
-    //     ]
-    // },
+    {
+        path: '/redirect',
+        component: Layout,
+        hidden: true,
+        children: [
+            {
+                path: '/redirect/:path*',
+                component: () => import('@/views/redirect/index')
+            }
+        ]
+    },
     {
         path: '/',
         component: Layout,
