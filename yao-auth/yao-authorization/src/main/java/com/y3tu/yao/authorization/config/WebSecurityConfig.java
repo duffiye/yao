@@ -63,7 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
                 .authenticationProvider(mobileAuthenticationProvider())
-                .userDetailsService(userDetailsService)
+                .userDetailsService(userDetailsService)   // spring security 自动配置, 自动注入一股userDetailService# com.y3tu.yao.authorization.security.UserDetailsServiceImpl
                 .passwordEncoder(passwordEncoder());
     }
 

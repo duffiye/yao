@@ -4,6 +4,7 @@ import com.y3tu.yao.authorization.service.UserService;
 import com.y3tu.yao.common.constants.ServerNameConstants;
 import com.y3tu.yao.common.vo.UserVO;
 import com.y3tu.tool.core.exception.ServerCallException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,9 +14,13 @@ import org.springframework.stereotype.Service;
 /**
  * @author y3tu
  */
+@Slf4j
 @Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+    /**
+     * Feign Interface ,调用具体的服务
+     */
     @Autowired
     private UserService userService;
 
@@ -30,6 +35,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (userVO == null) {
             throw new UsernameNotFoundException("未查询到此用户");
         }
-        return new UserDetailsImpl(userVO);
+        UserDetailsImpl userDetails = new UserDetailsImpl(userVO);
+        log.info("UserDetails {}", userDetails);
+        return userDetails;
     }
 }

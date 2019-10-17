@@ -4,9 +4,9 @@ spring:
   cloud:
     nacos:
       config:
-        server-addr: 132.232.11.210:8848
+        server-addr: nacos.91xft.cn:80
         file-extension: yml
-        group: AUTH_GROUP
+        group: YAO_AUTH_GROUP
   profiles:
     active: dev
   main:
