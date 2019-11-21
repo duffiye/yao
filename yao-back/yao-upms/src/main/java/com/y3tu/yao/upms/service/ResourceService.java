@@ -1,5 +1,6 @@
 package com.y3tu.yao.upms.service;
 
+import com.y3tu.yao.common.vo.sys.ResourceVO;
 import com.y3tu.yao.upms.model.entity.Resource;
 import com.y3tu.tool.core.pojo.TreeNode;
 import com.y3tu.tool.web.base.service.BaseService;
@@ -55,5 +56,13 @@ public interface ResourceService extends BaseService<Resource> {
     List<Resource> findResourceByRoleCode(String roleCode);
 
     List<String> findPermission(List<String> roles);
+
+
+    /**
+     * 获取当前用户的菜单资源
+     *
+     * @return 当前用户的菜单权限资源
+     */
+    List<ResourceVO> currentResource();
 
 }

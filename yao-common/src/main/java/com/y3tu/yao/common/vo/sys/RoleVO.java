@@ -1,10 +1,13 @@
 package com.y3tu.yao.common.vo.sys;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -45,6 +48,12 @@ public class RoleVO implements Serializable {
     private String remark;
 
     private String code;
+
+    @JsonProperty("menus")
+    List<MenuVO> menus;
+
+
+
 
 
 }

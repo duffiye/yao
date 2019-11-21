@@ -1,7 +1,9 @@
 package com.y3tu.yao.common.vo.sys;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnJava;
 
 import java.io.Serializable;
 import java.util.List;
@@ -36,5 +38,6 @@ public class MenuVO implements Serializable {
 
     private String icon;
 
+    @JsonProperty("action_entry_set")
     private List<ActionEntryVO> actionEntrySet;
 }

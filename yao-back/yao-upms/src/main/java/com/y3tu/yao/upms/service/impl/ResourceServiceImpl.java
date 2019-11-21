@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.y3tu.yao.common.constants.CommonConstants;
 import com.y3tu.yao.common.enums.DataStatusEnum;
 import com.y3tu.yao.common.enums.ResourceTypeEnum;
+import com.y3tu.yao.common.vo.sys.ResourceVO;
 import com.y3tu.yao.upms.mapper.ResourceMapper;
 import com.y3tu.yao.upms.model.entity.Resource;
 import com.y3tu.yao.upms.service.ResourceService;
@@ -119,5 +120,10 @@ public class ResourceServiceImpl extends BaseServiceImpl<ResourceMapper, Resourc
         }
         return permissions;
 
+    }
+
+    @Override
+    public List<ResourceVO> currentResource() {
+        return null;
     }
 }
