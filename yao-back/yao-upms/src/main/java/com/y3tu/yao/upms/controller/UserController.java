@@ -317,6 +317,9 @@ public class UserController extends BaseController<UserService, User> {
         UserVO userVO = userService.findUserByUsername(username);
         if (userVO != null && userVO.getRoles().size() > 0) {
             List<String> roleCodes = userVO.getRoles().stream().map(role -> role.getCode()).collect(Collectors.toList());
+        /*if (userVO != null && userVO.getRoles().size() > 0) {
+            List<String> roleCodes = userVO.getRoles().stream().map(role -> role.getRoleCode()).collect(Collectors.toList());
+>>>>>>> 54e7ae307459672d5e927e118ea326fa8247cc6d
             //获取资源权限
             Set<Resource> resources = resourceService.getResourceRoleCodes(roleCodes);
             Set<ResourceVO> resourceVOS = resources.stream().map(resource -> {
@@ -326,8 +329,10 @@ public class UserController extends BaseController<UserService, User> {
                     }
             ).collect(Collectors.toSet());
             userVO.setResources(resourceVOS);
+        }*/
         }
         return userVO;
+
     }
 
     /**

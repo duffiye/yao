@@ -12,3 +12,5 @@ yao-gateway/target/
 yao-log/yao-log-server/target/
 yao-log/yao-log-starter/target/
 yao-ui/
+yao-batch/target
+yao-feign/target
