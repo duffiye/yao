@@ -315,7 +315,7 @@ public class UserController extends BaseController<UserService, User> {
     @GetMapping("/findUserByUsername/{username}")
     public UserVO findUserByUsername(@PathVariable String username) {
         UserVO userVO = userService.findUserByUsername(username);
-        if (userVO != null && userVO.getRoles().size() > 0) {
+        /*if (userVO != null && userVO.getRoles().size() > 0) {
             List<String> roleCodes = userVO.getRoles().stream().map(role -> role.getRoleCode()).collect(Collectors.toList());
             //获取资源权限
             Set<Resource> resources = resourceService.getResourceRoleCodes(roleCodes);
@@ -326,7 +326,7 @@ public class UserController extends BaseController<UserService, User> {
                     }
             ).collect(Collectors.toSet());
             userVO.setResources(resourceVOS);
-        }
+        }*/
         return userVO;
     }
 
