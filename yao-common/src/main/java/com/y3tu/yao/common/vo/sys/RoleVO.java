@@ -1,4 +1,4 @@
-package com.y3tu.yao.common.vo;
+package com.y3tu.yao.common.vo.sys;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -37,26 +37,14 @@ public class RoleVO implements Serializable {
      */
     private Date updatedAt;
 
-    /**
-     * 角色名称
-     */
+
     private String name;
 
-    /**
-     * 状态
-     */
     private Integer state;
 
-
-    /**
-     * 角色编码
-     */
-    private String code;
-
-    /**
-     * 备注
-     */
     private String remark;
+
+    private String code;
 
 
 }

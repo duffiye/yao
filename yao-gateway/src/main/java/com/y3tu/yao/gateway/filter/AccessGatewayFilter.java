@@ -7,10 +7,12 @@ import com.y3tu.yao.gateway.exception.UnAuthorizedException;
 import com.y3tu.yao.gateway.feign.AuthenticationService;
 import com.y3tu.tool.core.exception.ServerCallException;
 import com.y3tu.tool.core.util.StrUtil;
+import com.y3tu.yao.gateway.feign.SysAuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -24,12 +26,18 @@ import reactor.core.publisher.Mono;
  */
 @Component
 @Slf4j
+@Order(1)
 public class AccessGatewayFilter implements GlobalFilter {
 
     @Autowired
     AuthenticationService authenticationService;
+
+
     @Autowired
     FilterIgnorePropertiesConfig filterIgnorePropertiesConfig;
+
+    @Autowired
+    SysAuthenticationService sysAuthenticationService;
 
     /**
      * 1.首先网关检查token是否有效，无效直接返回401，不调用签权服务
@@ -53,7 +61,8 @@ public class AccessGatewayFilter implements GlobalFilter {
         boolean hasPermission = false;
         try {
             //调用签权服务看用户是否有权限，若有权限进入下一个filter
-            hasPermission = authenticationService.hasPermission(authentication, url, method);
+//            hasPermission = authenticationService.hasPermission(authentication, url, method);
+           hasPermission = sysAuthenticationService.hasPermission(authentication, url, method);
 
         } catch (Exception e) {
             String msg = e.getMessage();

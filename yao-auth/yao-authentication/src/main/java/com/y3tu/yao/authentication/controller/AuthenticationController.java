@@ -22,10 +22,13 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @Slf4j
 public class AuthenticationController {
+
     @Autowired
     AuthenticationService authenticationService;
+
     @Autowired
     UserService userService;
+
     @Autowired
     HttpServletRequest request;
 

@@ -10,6 +10,7 @@ import java.util.List;
  * @author y3tu
  */
 public interface DepartmentService extends BaseService<Department> {
+
     /**
      * 通过父id获取 升序
      *

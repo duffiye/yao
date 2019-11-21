@@ -42,7 +42,7 @@ public class UserDetailsImpl implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorityList = new ArrayList<>();
         roleVos.forEach(role -> {
-            authorityList.add(new SimpleGrantedAuthority(role.getRoleCode()));
+//            authorityList.add(new SimpleGrantedAuthority(role.getRoleCode()));
         });
         return authorityList;
     }

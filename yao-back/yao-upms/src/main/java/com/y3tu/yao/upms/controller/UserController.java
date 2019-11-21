@@ -316,7 +316,7 @@ public class UserController extends BaseController<UserService, User> {
     public UserVO findUserByUsername(@PathVariable String username) {
         UserVO userVO = userService.findUserByUsername(username);
         if (userVO != null && userVO.getRoles().size() > 0) {
-            List<String> roleCodes = userVO.getRoles().stream().map(role -> role.getRoleCode()).collect(Collectors.toList());
+            List<String> roleCodes = userVO.getRoles().stream().map(role -> role.getCode()).collect(Collectors.toList());
             //获取资源权限
             Set<Resource> resources = resourceService.getResourceRoleCodes(roleCodes);
             Set<ResourceVO> resourceVOS = resources.stream().map(resource -> {
