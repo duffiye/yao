@@ -2,7 +2,7 @@ package com.y3tu.yao.upms.controller;
 
 import com.y3tu.tool.core.http.IpUtil;
 import com.y3tu.tool.core.pojo.R;
-import com.y3tu.yao.common.constants.ServerNameConstants;
+import com.y3tu.yao.feign.constant.ServerNameConstants;
 import com.y3tu.yao.log.starter.annotation.Log;
 import com.y3tu.yao.log.starter.constant.ActionTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;

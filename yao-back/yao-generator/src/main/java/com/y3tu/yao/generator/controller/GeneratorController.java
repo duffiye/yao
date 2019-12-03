@@ -6,7 +6,7 @@ import com.y3tu.tool.core.db.MetaUtil;
 import com.y3tu.tool.core.io.IoUtil;
 import com.y3tu.tool.core.pojo.R;
 import com.y3tu.tool.core.util.StrUtil;
-import com.y3tu.yao.common.constants.ServerNameConstants;
+import com.y3tu.yao.feign.constant.ServerNameConstants;
 import com.y3tu.yao.generator.exception.GeneratorException;
 import com.y3tu.yao.generator.model.entity.GeneratorConfig;
 import com.y3tu.yao.generator.model.vo.ColumnInfo;

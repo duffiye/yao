@@ -39,26 +39,16 @@
     </sql>
 
     <!-- userVo结果集 -->
-    <resultMap id="userVoResultMap" type="com.y3tu.yao.common.vo.UserVO">
-        <id column="id" property="id"/>
+    <resultMap id="userVoResultMap" type="com.y3tu.yao.feign.vo.UserVO">
+        <result column="uid" property="uid"/>
         <result column="username" property="username"/>
-        <result column="password" property="password"/>
-        <result column="mobile" property="mobile"/>
-        <result column="avatar" property="avatar"/>
-        <result column="email" property="email"/>
-        <result column="ucreate_time" property="createTime"/>
-        <result column="uupdate_time" property="updateTime"/>
-        <result column="udel_flag" property="delFlag"/>
-        <result column="department_id" property="departmentId"/>
-        <result column="departmentName" property="departmentName"/>
-        <collection property="roles" ofType="com.y3tu.yao.common.vo.RoleVO">
-            <id column="id" property="id"/>
-            <result column="name" property="name"/>
-            <result column="role_code" property="roleCode"/>
-            <result column="description" property="description"/>
-            <result column="rcreate_time" property="createTime"/>
-            <result column="rupdate_time" property="updateTime"/>
-        </collection>
+        <result column="full_name" property="fullName"/>
+        <result column="role_name" property="roleName"/>
+        <result column="phone" property="phone"/>
+        <result column="last_login_at" property="lastLoginAt"/>
+        <result column="last_login_ip_at" property="lastLoginIpAt"/>
+        <result column="create_at" property="createdAt"/>
+        <result column="state" property="state"/>
     </resultMap>
 
     <sql id="selectUserVo">

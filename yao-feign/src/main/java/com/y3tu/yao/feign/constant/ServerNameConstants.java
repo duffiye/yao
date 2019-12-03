@@ -1,4 +1,4 @@
-package com.y3tu.yao.common.constants;
+package com.y3tu.yao.feign.constant;
 
 
 /**

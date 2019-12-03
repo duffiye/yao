@@ -99,6 +99,11 @@
             <version>${spring-boot-admin-version}</version>
         </dependency>
 
+        <!--feign-->
+        <dependency>
+            <groupId>com.y3tu</groupId>
+            <artifactId>yao-feign</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

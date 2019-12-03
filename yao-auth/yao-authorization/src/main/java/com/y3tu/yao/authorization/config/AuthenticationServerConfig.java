@@ -1,9 +1,9 @@
 package com.y3tu.yao.authorization.config;
 
 import com.y3tu.yao.authorization.exception.CustomWebResponseExceptionTranslator;
-import com.y3tu.yao.authorization.security.UserDetailsImpl;
 import com.y3tu.yao.common.constants.AuthConstants;
 import com.y3tu.yao.common.constants.UserConstants;
+import com.y3tu.yao.common.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

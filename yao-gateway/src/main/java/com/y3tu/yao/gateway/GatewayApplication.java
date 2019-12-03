@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
  */
 @EnableDiscoveryClient
 @SpringBootApplication
-@EnableFeignClients
+@EnableFeignClients(basePackages = {"com.y3tu.yao.feign.client"})
 @Import(FilterIgnorePropertiesConfig.class)
 public class GatewayApplication {
 

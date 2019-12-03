@@ -4,7 +4,7 @@ import com.y3tu.yao.batch.listener.JobListener;
 import com.y3tu.yao.batch.model.AccessTest;
 import com.y3tu.yao.batch.reader.AccessAdapterReader;
 import com.y3tu.yao.batch.repository.AccessTestRepository;
-import com.y3tu.yao.model.Access;
+import com.y3tu.yao.feign.model.Access;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;

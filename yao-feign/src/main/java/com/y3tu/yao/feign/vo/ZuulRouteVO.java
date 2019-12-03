@@ -1,4 +1,4 @@
-package com.y3tu.yao.common.vo;
+package com.y3tu.yao.feign.vo;
 
 import lombok.Data;
 

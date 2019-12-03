@@ -3,15 +3,6 @@ package com.y3tu.yao.upms.controller;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.y3tu.yao.common.constants.ServerNameConstants;
-import com.y3tu.yao.common.enums.UserStatusEnum;
-import com.y3tu.yao.common.util.UserUtil;
-import com.y3tu.yao.common.vo.ResourceVO;
-import com.y3tu.yao.common.vo.RoleVO;
-import com.y3tu.yao.common.vo.UserVO;
-import com.y3tu.yao.log.starter.annotation.Log;
-import com.y3tu.yao.log.starter.constant.ActionTypeEnum;
-import com.y3tu.yao.upms.model.dto.UserDTO;
 import com.y3tu.tool.core.collection.CollectionUtil;
 import com.y3tu.tool.core.date.DateUtil;
 import com.y3tu.tool.core.pojo.R;
@@ -20,6 +11,15 @@ import com.y3tu.tool.core.util.StrUtil;
 import com.y3tu.tool.web.annotation.MethodMapping;
 import com.y3tu.tool.web.base.controller.BaseController;
 import com.y3tu.tool.web.base.pojo.PageInfo;
+import com.y3tu.yao.common.enums.UserStatusEnum;
+import com.y3tu.yao.common.util.UserUtil;
+import com.y3tu.yao.feign.constant.ServerNameConstants;
+import com.y3tu.yao.feign.vo.ResourceVO;
+import com.y3tu.yao.feign.vo.RoleVO;
+import com.y3tu.yao.feign.vo.UserVO;
+import com.y3tu.yao.log.starter.annotation.Log;
+import com.y3tu.yao.log.starter.constant.ActionTypeEnum;
+import com.y3tu.yao.upms.model.dto.UserDTO;
 import com.y3tu.yao.upms.model.entity.Resource;
 import com.y3tu.yao.upms.model.entity.Role;
 import com.y3tu.yao.upms.model.entity.User;
@@ -36,7 +36,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -163,7 +165,7 @@ public class UserController extends BaseController<UserService, User> {
                 return roleVO;
             }).collect(Collectors.toList());
 
-            userVO.setRoles(roleVOS);
+            //userVO.setRoles(roleVOS);
             //关联资源权限
             if (roles.size() > 0) {
                 Set<Resource> resources = resourceService.getResourceRoleCodes(roles.stream().map(role -> role.getRoleCode()).collect(Collectors.toList()));
@@ -173,7 +175,7 @@ public class UserController extends BaseController<UserService, User> {
                             return resourceVO;
                         }
                 ).collect(Collectors.toSet());
-                userVO.setResources(resourceVOS);
+                //userVO.setResources(resourceVOS);
             }
             userVOS.add(userVO);
         }
@@ -314,25 +316,7 @@ public class UserController extends BaseController<UserService, User> {
      */
     @GetMapping("/findUserByUsername/{username}")
     public UserVO findUserByUsername(@PathVariable String username) {
-        UserVO userVO = userService.findUserByUsername(username);
-        if (userVO != null && userVO.getRoles().size() > 0) {
-            List<String> roleCodes = userVO.getRoles().stream().map(role -> role.getCode()).collect(Collectors.toList());
-        /*if (userVO != null && userVO.getRoles().size() > 0) {
-            List<String> roleCodes = userVO.getRoles().stream().map(role -> role.getRoleCode()).collect(Collectors.toList());
->>>>>>> 54e7ae307459672d5e927e118ea326fa8247cc6d
-            //获取资源权限
-            Set<Resource> resources = resourceService.getResourceRoleCodes(roleCodes);
-            Set<ResourceVO> resourceVOS = resources.stream().map(resource -> {
-                        ResourceVO resourceVO = new ResourceVO();
-                        BeanUtils.copyProperties(resource, resourceVO);
-                        return resourceVO;
-                    }
-            ).collect(Collectors.toSet());
-            userVO.setResources(resourceVOS);
-        }*/
-        }
-        return userVO;
-
+        return userService.findUserByUsername(username);
     }
 
     /**

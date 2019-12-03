@@ -14,7 +14,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients
+@EnableFeignClients(basePackages = {"com.y3tu.yao.feign.client"})
 @EnableDefaultExceptionAdvice
 public class AuthenticationServerApplication {
     public static void main(String[] args) {

@@ -1,8 +1,8 @@
 package com.y3tu.yao.upms.mapper;
 
-import com.y3tu.yao.common.vo.UserVO;
-import com.y3tu.yao.upms.model.entity.User;
 import com.y3tu.tool.web.base.mapper.BaseMapper;
+import com.y3tu.yao.feign.vo.UserVO;
+import com.y3tu.yao.upms.model.entity.User;
 
 import java.util.List;
 
@@ -32,6 +32,7 @@ public interface UserMapper extends BaseMapper<User> {
      * @return userVo
      */
     UserVO selectUserVoByUsername(String username);
+
     /**
      * 通过手机号查询用户信息（含有角色信息）
      *

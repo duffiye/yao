@@ -1,11 +1,16 @@
 package com.y3tu.yao.authentication.service.impl;
 
-import com.y3tu.yao.authentication.feign.ResourceService;
-import com.y3tu.yao.authentication.service.AuthenticationService;
-import com.y3tu.yao.common.vo.ResourceVO;
 import com.y3tu.tool.core.collection.CollectionUtil;
 import com.y3tu.tool.core.collection.IterUtil;
+import com.y3tu.tool.core.exception.ErrorEnum;
 import com.y3tu.tool.core.util.StrUtil;
+import com.y3tu.yao.authentication.service.AuthenticationService;
+import com.y3tu.yao.common.exception.ServiceCallException;
+import com.y3tu.yao.feign.client.MenuFeignClient;
+import com.y3tu.yao.feign.client.UserFeignClient;
+import com.y3tu.yao.feign.constant.ServerNameConstants;
+import com.y3tu.yao.feign.vo.MenuVO;
+import com.y3tu.yao.feign.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +37,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Autowired
-    ResourceService resourceService;
+    private MenuFeignClient menuFeignClient;
+
+    @Autowired
+    private UserFeignClient userFeignClient;
 
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
@@ -59,6 +67,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public boolean decide(HttpServletRequest authRequest) {
         log.debug("正在访问的url是:{}，method:{}", authRequest.getServletPath(), authRequest.getMethod());
+        System.out.println("正在访问的url是:{}，method:{}" + authRequest.getServletPath() + authRequest.getMethod());
 
         // 前端跨域OPTIONS请求预检放行 也可通过前端配置代理实现
         // 在这里放行具有一定风险,也可通过前端配置代理实现
@@ -70,7 +79,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         Object principal = authentication.getPrincipal();
         List<SimpleGrantedAuthority> grantedAuthorityList = (List<SimpleGrantedAuthority>) authentication.getAuthorities();
-        boolean hasPermission = false;
+        boolean hasPermission = true;
 
         if (principal != null) {
             if (CollectionUtil.isEmpty(grantedAuthorityList)) {
@@ -78,42 +87,57 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return false;
             }
 
-            Set<ResourceVO> paths = new HashSet<>();
+            Set<MenuVO> paths = new HashSet<>();
             for (SimpleGrantedAuthority authority : grantedAuthorityList) {
                 //如果是管理员角色ROLE_ADMIN 则具有此系统的所有权限 直接放行
-                if (StrUtil.equals(authority.getAuthority(), "ROLE_ADMIN")) {
+                if (StrUtil.equals(authority.getAuthority(), "super_admin")) {
                     hasPermission = true;
                     break;
                 }
 
                 // 角色与菜单权限的关联关系需要缓存提高访问效率,可以考虑把资源数据放在redis中
-                Set<ResourceVO> resourceVOS = resourceService.listResourceByRole(authority.getAuthority());
-                if (IterUtil.isNotEmpty((resourceVOS))) {
-                    CollectionUtil.addAll(paths, resourceVOS, null);
+                Set<MenuVO> menuVOS = menuFeignClient.listMenuByRole(authority.getAuthority());
+                if (IterUtil.isNotEmpty((menuVOS))) {
+                    CollectionUtil.addAll(paths, menuVOS, null);
                 }
             }
 
             //如果请求的url不在资源列表之中，那么直接放行
-            Set<ResourceVO> allResourceVOS = resourceService.listAllResource();
+            Set<MenuVO> allMenuVOS = menuFeignClient.listAllMenu();
             boolean isNeedPermission = false;
-            for (ResourceVO resourceVO : allResourceVOS) {
-                if (StrUtil.isNotEmpty(resourceVO.getPath()) && antPathMatcher.match(resourceVO.getPath(), authRequest.getServletPath())) {
+            for (MenuVO menuVO : allMenuVOS) {
+                if (StrUtil.isNotEmpty(menuVO.getUrl()) && antPathMatcher.match(menuVO.getUrl(), authRequest.getServletPath())) {
                     isNeedPermission = true;
                 }
             }
-            if(!isNeedPermission){
+            if (!isNeedPermission) {
                 return true;
             }
 
             ///如果请求的url在资源列表之中,那么判断用户所属角色是否拥有访问此资源的权限
-            for (ResourceVO resourceVO : paths) {
-                if (StrUtil.isNotEmpty(resourceVO.getPath()) && antPathMatcher.match(resourceVO.getPath(), authRequest.getServletPath())
-                        && authRequest.getMethod().equalsIgnoreCase(resourceVO.getMethod())) {
+            for (MenuVO menuVO : paths) {
+                if (StrUtil.isNotEmpty(menuVO.getUrl()) && antPathMatcher.match(menuVO.getUrl(), authRequest.getServletPath())) {
                     hasPermission = true;
                     break;
                 }
             }
         }
         return hasPermission;
+    }
+
+
+    @Override
+    public UserVO getUser() {
+        //获取用户认证信息
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserVO userVO = new UserVO();
+        if (authentication.getPrincipal() != null) {
+            try {
+                userVO = userFeignClient.loadUserByUsername(String.valueOf(authentication.getPrincipal()));
+            } catch (Exception e) {
+                throw new ServiceCallException("服务[" + ServerNameConstants.BACK_SERVER + "]调用异常！", ErrorEnum.SERVICE_CALL_ERROR);
+            }
+        }
+        return userVO;
     }
 }

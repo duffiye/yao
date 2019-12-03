@@ -1,6 +1,6 @@
 package com.y3tu.yao.upms.service;
 
-import com.y3tu.yao.common.vo.sys.ResourceVO;
+import com.y3tu.yao.feign.vo.ResourceVO;
 import com.y3tu.yao.upms.model.entity.Resource;
 import com.y3tu.tool.core.pojo.TreeNode;
 import com.y3tu.tool.web.base.service.BaseService;

@@ -1,4 +1,4 @@
-package com.y3tu.yao.model;
+package com.y3tu.yao.feign.model;
 
 /**
  * ClassName: Access

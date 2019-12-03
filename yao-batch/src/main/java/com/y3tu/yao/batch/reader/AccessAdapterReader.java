@@ -1,14 +1,13 @@
 package com.y3tu.yao.batch.reader;
 
 import com.y3tu.yao.batch.config.JobConfiguration;
-import com.y3tu.yao.feign.AccessFeignClient;
-import com.y3tu.yao.model.Access;
+import com.y3tu.yao.feign.client.AccessFeignClient;
+import com.y3tu.yao.feign.model.Access;
 import org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 

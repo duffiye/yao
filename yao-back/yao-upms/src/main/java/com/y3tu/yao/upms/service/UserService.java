@@ -1,9 +1,9 @@
 package com.y3tu.yao.upms.service;
 
-import com.y3tu.yao.common.vo.UserVO;
+import com.y3tu.tool.web.base.service.BaseService;
+import com.y3tu.yao.feign.vo.UserVO;
 import com.y3tu.yao.upms.model.dto.UserDTO;
 import com.y3tu.yao.upms.model.entity.User;
-import com.y3tu.tool.web.base.service.BaseService;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
-package com.y3tu.yao.authentication.feign;
+package com.y3tu.yao.feign.client;
 
-import com.y3tu.yao.common.constants.ServerNameConstants;
-import com.y3tu.yao.common.vo.ResourceVO;
+import com.y3tu.yao.feign.constant.ServerNameConstants;
+import com.y3tu.yao.feign.vo.MenuVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.Set;
 
 /**
- * @author y3tu
+ * @author
  */
 @FeignClient(name = ServerNameConstants.BACK_SERVER)
-public interface ResourceService {
+public interface MenuFeignClient {
     /**
      * 通过角色名查询资源信息
      *
@@ -20,13 +20,13 @@ public interface ResourceService {
      * @return 菜单列表
      */
     @GetMapping("/resource/role/{roleCode}")
-    Set<ResourceVO> listResourceByRole(@PathVariable("roleCode") String roleCode);
+    Set<MenuVO> listMenuByRole(@PathVariable("roleCode") String roleCode);
 
     /**
      * 获取全部资源信息
      *
      * @return
      */
-    @GetMapping("/resource/listAllResource")
-    Set<ResourceVO> listAllResource();
+    @GetMapping("/resource/list")
+    Set<MenuVO> listAllMenu();
 }

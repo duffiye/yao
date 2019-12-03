@@ -1,11 +1,11 @@
 package com.y3tu.yao.authentication.controller;
 
-import com.y3tu.yao.authentication.feign.UserService;
-import com.y3tu.yao.authentication.service.AuthenticationService;
-import com.y3tu.yao.common.constants.ServerNameConstants;
-import com.y3tu.yao.common.vo.UserVO;
 import com.y3tu.tool.core.exception.ErrorEnum;
 import com.y3tu.tool.core.pojo.R;
+import com.y3tu.yao.authentication.service.AuthenticationService;
+import com.y3tu.yao.feign.client.UserFeignClient;
+import com.y3tu.yao.feign.constant.ServerNameConstants;
+import com.y3tu.yao.feign.vo.UserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -27,7 +27,7 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @Autowired
-    UserService userService;
+    UserFeignClient userFeignClient;
 
     @Autowired
     HttpServletRequest request;
@@ -57,7 +57,7 @@ public class AuthenticationController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getPrincipal() != null) {
             try {
-                UserVO userVO = userService.loadUserByUsername(String.valueOf(authentication.getPrincipal()));
+                UserVO userVO = userFeignClient.loadUserByUsername(String.valueOf(authentication.getPrincipal()));
                 return R.success(userVO);
             } catch (Exception e) {
                 return R.error("服务[" + ServerNameConstants.BACK_SERVER + "]调用异常！", ErrorEnum.SERVICE_CALL_ERROR);

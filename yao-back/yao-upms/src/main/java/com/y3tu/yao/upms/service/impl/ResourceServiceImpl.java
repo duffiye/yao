@@ -2,17 +2,16 @@ package com.y3tu.yao.upms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.y3tu.yao.common.constants.CommonConstants;
-import com.y3tu.yao.common.enums.DataStatusEnum;
-import com.y3tu.yao.common.enums.ResourceTypeEnum;
-import com.y3tu.yao.common.vo.sys.ResourceVO;
-import com.y3tu.yao.upms.mapper.ResourceMapper;
-import com.y3tu.yao.upms.model.entity.Resource;
-import com.y3tu.yao.upms.service.ResourceService;
 import com.y3tu.tool.core.pojo.TreeNode;
 import com.y3tu.tool.core.util.StrUtil;
 import com.y3tu.tool.core.util.TreeUtil;
 import com.y3tu.tool.web.base.service.impl.BaseServiceImpl;
+import com.y3tu.yao.common.enums.DataStatusEnum;
+import com.y3tu.yao.common.enums.ResourceTypeEnum;
+import com.y3tu.yao.feign.vo.ResourceVO;
+import com.y3tu.yao.upms.mapper.ResourceMapper;
+import com.y3tu.yao.upms.model.entity.Resource;
+import com.y3tu.yao.upms.service.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

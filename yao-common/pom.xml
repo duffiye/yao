@@ -59,6 +59,18 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>com.y3tu</groupId>
+            <artifactId>yao-feign</artifactId>
+        </dependency>
+
+        <!--security-->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>5.1.6.RELEASE</version>
+        </dependency>
+
     </dependencies>
 
 </project>

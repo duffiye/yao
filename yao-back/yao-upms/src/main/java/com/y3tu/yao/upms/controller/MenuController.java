@@ -5,13 +5,12 @@ import com.y3tu.tool.core.date.DateUtil;
 import com.y3tu.tool.core.pojo.R;
 import com.y3tu.yao.common.constants.CommonConstants;
 import com.y3tu.yao.common.enums.DataStatusEnum;
-import com.y3tu.yao.common.vo.ResourceVO;
+import com.y3tu.yao.feign.vo.ResourceVO;
 import com.y3tu.yao.log.starter.annotation.Log;
 import com.y3tu.yao.log.starter.constant.ActionTypeEnum;
 import com.y3tu.yao.upms.model.entity.Resource;
 import com.y3tu.yao.upms.model.entity.Role;
 import com.y3tu.yao.upms.model.entity.RoleResource;
-import com.y3tu.yao.upms.service.MenuService;
 import com.y3tu.yao.upms.service.ResourceService;
 import com.y3tu.yao.upms.service.RoleResourceService;
 import com.y3tu.yao.upms.service.UserRoleService;
@@ -19,7 +18,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
@@ -75,7 +73,6 @@ public class MenuController {
      */
     @PostMapping(value = "/save")
     @Log(actionName = "新增资源", actionType = ActionTypeEnum.ADD)
-    @Override
     public R save(@RequestBody Resource resource) {
         // 判断拦截请求的操作权限按钮名是否已存在
         if (CommonConstants.PERMISSION_OPERATION.equals(resource.getType())) {
@@ -99,7 +96,6 @@ public class MenuController {
      */
     @PostMapping(value = "/update")
     @Log(actionName = "更新资源", actionType = ActionTypeEnum.EDIT)
-    @Override
     public R update(@RequestBody Resource resource) {
         // 判断拦截请求的操作权限按钮名是否已存在
         if (CommonConstants.PERMISSION_OPERATION.equals(resource.getType())) {
@@ -127,7 +123,6 @@ public class MenuController {
     @ApiOperation(value = "批量通过ids删除")
     @DeleteMapping(value = "/delByIds/{ids}")
     @Log(actionName = "删除资源", actionType = ActionTypeEnum.DELETE)
-    @Override
     public R delByIds(@PathVariable String[] ids) {
         for (String id : ids) {
             List<RoleResource> list = roleResourceService.list(new QueryWrapper<RoleResource>().eq("resource_id", id));

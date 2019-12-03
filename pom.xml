@@ -47,6 +47,7 @@
         <qcloudsms.version>1.0.5</qcloudsms.version>
         <org.mapstruct.version>1.1.0.Final</org.mapstruct.version>
         <y3tu-tool-version>2.1</y3tu-tool-version>
+        <yao-feign-version>1.0</yao-feign-version>
     </properties>
 
     <dependencyManagement>
@@ -82,6 +83,12 @@
                 <version>${mysql-connector.version}</version>
             </dependency>
 
+            <!--feign-->
+            <dependency>
+                <groupId>com.y3tu</groupId>
+                <artifactId>yao-feign</artifactId>
+                <version>${yao-feign-version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

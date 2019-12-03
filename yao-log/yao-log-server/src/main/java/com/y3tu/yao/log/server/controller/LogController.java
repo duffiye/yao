@@ -1,11 +1,11 @@
 package com.y3tu.yao.log.server.controller;
 
-import com.y3tu.yao.common.constants.ServerNameConstants;
-import com.y3tu.yao.log.server.model.entity.Log;
-import com.y3tu.yao.log.server.service.LogService;
 import com.y3tu.tool.core.pojo.R;
 import com.y3tu.tool.web.base.controller.BaseController;
 import com.y3tu.tool.web.base.pojo.PageInfo;
+import com.y3tu.yao.feign.constant.ServerNameConstants;
+import com.y3tu.yao.log.server.model.entity.Log;
+import com.y3tu.yao.log.server.service.LogService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;

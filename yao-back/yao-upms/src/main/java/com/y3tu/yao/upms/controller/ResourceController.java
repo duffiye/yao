@@ -2,7 +2,7 @@ package com.y3tu.yao.upms.controller;
 
 import com.y3tu.tool.core.pojo.R;
 import com.y3tu.tool.web.base.controller.BaseController;
-import com.y3tu.yao.common.constants.ServerNameConstants;
+import com.y3tu.yao.feign.constant.ServerNameConstants;
 import com.y3tu.yao.log.starter.annotation.Log;
 import com.y3tu.yao.upms.model.entity.Resource;
 import com.y3tu.yao.upms.service.ResourceService;
@@ -28,7 +28,6 @@ public class ResourceController extends BaseController<ResourceService, Resource
     ResourceService resourceService;
 
     /**
-     *
      * 当前登录用户的菜单权限资源
      *
      * @return
@@ -36,7 +35,7 @@ public class ResourceController extends BaseController<ResourceService, Resource
     @RequestMapping(path = "/current", method = {RequestMethod.GET, RequestMethod.POST})
     public R currentResource() {
 
-       return R.success(resourceService.currentResource());
+        return R.success(resourceService.currentResource());
     }
 
 }

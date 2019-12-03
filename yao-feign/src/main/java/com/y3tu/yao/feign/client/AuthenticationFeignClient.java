@@ -1,20 +1,18 @@
-package com.y3tu.yao.gateway.feign;
+package com.y3tu.yao.feign.client;
 
-import com.y3tu.yao.common.constants.ServerNameConstants;
-import feign.Logger;
+import com.y3tu.yao.feign.constant.ServerNameConstants;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * @author y3tu
+ * @author zouht
  * @date 2019-05-09
  */
-@FeignClient(name = ServerNameConstants.AUTHENTICATION_SERVER, configuration = AuthenticationService.UserFeignConfig.class)
-public interface AuthenticationService {
+@FeignClient(name = ServerNameConstants.AUTHENTICATION_SERVER)
+public interface AuthenticationFeignClient {
 
     /**
      * 调用签权服务，判断用户是否有权限
@@ -27,12 +25,5 @@ public interface AuthenticationService {
      */
     @PostMapping(value = "/hasPermission")
     boolean hasPermission(@RequestHeader(HttpHeaders.AUTHORIZATION) String authentication, @RequestParam("url") String url, @RequestParam("method") String method);
-
-    class UserFeignConfig {
-        @Bean
-        public Logger.Level logger() {
-            return Logger.Level.FULL;
-        }
-    }
 
 }

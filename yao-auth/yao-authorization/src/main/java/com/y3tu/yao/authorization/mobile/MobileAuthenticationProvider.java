@@ -1,9 +1,9 @@
 package com.y3tu.yao.authorization.mobile;
 
-import com.y3tu.yao.authorization.security.UserDetailsImpl;
-import com.y3tu.yao.authorization.service.UserService;
 import com.y3tu.yao.common.constants.AuthConstants;
-import com.y3tu.yao.common.vo.UserVO;
+import com.y3tu.yao.common.security.UserDetailsImpl;
+import com.y3tu.yao.feign.client.UserFeignClient;
+import com.y3tu.yao.feign.vo.UserVO;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * 手机验证码登录逻辑实现
+ *
  * @author y3tu
  */
 @Slf4j
@@ -27,13 +28,13 @@ public class MobileAuthenticationProvider implements AuthenticationProvider {
     private RedisTemplate redisTemplate;
 
     @Autowired
-    private UserService userService;
+    private UserFeignClient userFeignClient;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         MobileAuthenticationToken mobileAuthenticationToken = (MobileAuthenticationToken) authentication;
         String mobile = mobileAuthenticationToken.getPrincipal().toString();
-        Object realCode  = redisTemplate.opsForValue().get(AuthConstants.REDIS_MOBILE_CODE_PREFIX + mobile);
+        Object realCode = redisTemplate.opsForValue().get(AuthConstants.REDIS_MOBILE_CODE_PREFIX + mobile);
         String inputCode = authentication.getCredentials().toString();
         // 判断手机的验证码是否存在
         if (realCode == null) {
@@ -41,12 +42,12 @@ public class MobileAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("登录失败，验证码不存在");
         }
         // 判断是否验证码跟redis中存的验证码是否正确
-        if(!inputCode.equalsIgnoreCase(realCode.toString())) {
+        if (!inputCode.equalsIgnoreCase(realCode.toString())) {
             log.debug("登录失败，您输入的验证码不正确");
             throw new BadCredentialsException("登录失败，验证码不正确");
         }
-        UserVO userVO = userService.loadUserByMobile(mobile);
-        if(userVO == null) {
+        UserVO userVO = userFeignClient.loadUserByMobile(mobile);
+        if (userVO == null) {
             log.error("登录失败，用户不存在");
             throw new UsernameNotFoundException("登录失败, 手机号码不存在");
         }
