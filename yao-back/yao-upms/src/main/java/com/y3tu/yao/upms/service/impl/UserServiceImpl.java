@@ -2,26 +2,34 @@ package com.y3tu.yao.upms.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
 import com.y3tu.tool.core.collection.CollectionUtil;
+import com.y3tu.tool.core.exception.BusinessException;
 import com.y3tu.tool.web.base.service.impl.BaseServiceImpl;
 import com.y3tu.yao.common.enums.UserStatusEnum;
 import com.y3tu.yao.feign.vo.UserVO;
-import com.y3tu.yao.upms.mapper.UserMapper;
+import com.y3tu.yao.upms.mapper.*;
 import com.y3tu.yao.upms.model.dto.UserDTO;
-import com.y3tu.yao.upms.model.entity.Resource;
-import com.y3tu.yao.upms.model.entity.Role;
-import com.y3tu.yao.upms.model.entity.User;
+import com.y3tu.yao.upms.model.entity.*;
+import com.y3tu.yao.upms.model.query.user.UserAddQuery;
+import com.y3tu.yao.upms.model.query.user.UserQuery;
+import com.y3tu.yao.upms.model.query.user.UserUpdateQuery;
+import com.y3tu.yao.upms.model.vo.PageVO;
+import com.y3tu.yao.upms.model.vo.UserQueryVO;
 import com.y3tu.yao.upms.service.ResourceService;
 import com.y3tu.yao.upms.service.RoleService;
 import com.y3tu.yao.upms.service.UserRoleService;
 import com.y3tu.yao.upms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.y3tu.yao.common.constants.DateConstant.NORM_DATETIME_PATTERN;
+import static com.y3tu.yao.upms.constant.UpmsConstant.RoleCode.SUPER_ADMIN;
 
 /**
  * <p>
@@ -36,50 +44,106 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     @Autowired
     RoleService roleService;
+
     @Autowired
     ResourceService resourceService;
+
     @Autowired
     UserRoleService userRoleService;
+
     @Autowired
     UserMapper userMapper;
 
+    @Autowired
+    RoleMapper roleMapper;
+
+    @Autowired
+    UserRoleMapper userRoleMapper;
+
+    @Autowired
+    BaseUserMapper baseUserMapper;
+
+    @Autowired
+    STFStaffMapper stfStaffMapper;
+
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
     @Override
-    public UserDTO findByUsernameAndStatus(String username) {
+    public PageVO<UserQueryVO> pageByCondition(UserQuery userQuery) {
+        Integer userId = userQuery.getUserId();
 
-        List<User> list = this.list(new QueryWrapper<User>().eq("username", username).eq("status", UserStatusEnum.NORMAL.getCode()));
-
-        if (list != null && list.size() > 0) {
-            User user = list.get(0);
-            List<Role> roleList = userRoleService.findByUserId(user.getId());
-            UserDTO userDTO = new UserDTO();
-            BeanUtil.copyProperties(user, userDTO);
-            userDTO.setRoles(roleList);
-            List<Role> roles = userRoleService.findByUserId(user.getId());
-            List<String> roleStrList = roles.stream().map(role -> role.getRoleCode()).collect(Collectors.toList());
-            Set<Resource> resourceList = resourceService.getResourceRoleCodes(roleStrList);
-            userDTO.setResources(resourceList);
-            return userDTO;
+        User user = userMapper.selectById(userId);
+        if (user.getRoleCode().equals(SUPER_ADMIN)){
+            PageHelper.startPage(userQuery.getPageNum(), userQuery.getPageSize(), userQuery.getPageNum() != 0);
+            return new PageVO<>(userMapper.selectByCondition(userQuery));
+        }else{
+            PageHelper.startPage(userQuery.getPageNum(), userQuery.getPageSize(), userQuery.getPageNum() != 0);
+            return new PageVO<>(userMapper.selectSelf(userId));
         }
-        return null;
     }
 
     @Override
-    public User findByMobile(String mobile) {
-        List<User> list = this.list(new QueryWrapper<User>().eq("mobile", mobile));
-        if (CollectionUtil.isNotEmpty(list)) {
-            return list.get(0);
-        }
-        return null;
+    public void resetPassWord(String id) {
+        // 查询出该用户
+        User user =userMapper.selectById(id);
+        // 截取手机后六位做加密
+        String phone = user.getPhone();
+        String passStr = phone.substring(phone.length() - 6, phone.length());
+        String newPassWord = encoder.encode(passStr);
+        user.setPassword(newPassWord);
+        // 保存
+        userMapper.updateById(user);
     }
 
     @Override
-    public User findByEmail(String email) {
-        List<User> list = this.list(new QueryWrapper<User>().eq("email", email));
-        if (CollectionUtil.isNotEmpty(list)) {
-            return list.get(0);
+    public void addUser(UserAddQuery query) {
+
+        String username = query.getUsername();
+
+        if (Objects.nonNull(userMapper.selectUserVoByUsername(username))) {
+            throw new BusinessException("用户名已经存在,请勿重复添加");
         }
-        return null;
+
+        User user = new User();
+
+        // 插入base_user表
+        BaseUser baseUser = new BaseUser();
+        String openID = UUID.randomUUID().toString().replaceAll("-", "");
+        baseUser.setOpenID(openID);
+        baseUser.setPhone(query.getPhone());
+        baseUserMapper.insert(baseUser);
+
+        // 插入stfStaff 会员表
+        STFStaff stfStaff = new STFStaff();
+        stfStaff.setOpenID(openID);
+        stfStaffMapper.insert(stfStaff);
+
+        //插入sys_user表
+        User sysUser = new User();
+        sysUser.setUid(baseUser.getId());
+        // 复制属性
+        BeanUtil.copyProperties(query, user);
+        // 加密密码
+        user.setPassword( encoder.encode(user.getPassword()));
+        // 入库
+        userMapper.insert(user);
     }
+
+    @Override
+    public void updateUser(UserUpdateQuery query) {
+        String uid = query.getUid();
+        User user = userMapper.selectUserByUid(uid);
+        BeanUtil.copyProperties(query, user);
+        userMapper.updateById(user);
+    }
+
+    @Override
+    public void changeState(String uid, Integer state) {
+        User user = userMapper.selectUserByUid(uid);
+        user.setState(state);
+        userMapper.updateById(user);
+    }
+
 
     @Override
     public List<UserDTO> selectAll() {
@@ -123,6 +187,23 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     @Override
     public UserVO findUserByOpenId(String openId) {
         return userMapper.selectUserVoByOpenId(openId);
+    }
+
+    /**
+     *功能描述 :修改用户登录信息
+     * @author zht
+     * @date 2019/12/3
+     * @param userId
+     * @param ip
+     * @return void
+     */
+    @Override
+    public void updateLoginInfo(String userId,String ip) {
+        User user = new User();
+        user.setId(userId);
+        user.setLastLoginIpAt(ip);
+        user.setLastLoginIpAt(new SimpleDateFormat(NORM_DATETIME_PATTERN).format(new Date()));
+        userMapper.updateById(user);
     }
 
 

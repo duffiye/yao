@@ -8,15 +8,24 @@ import com.y3tu.tool.core.util.TreeUtil;
 import com.y3tu.tool.web.base.service.impl.BaseServiceImpl;
 import com.y3tu.yao.common.enums.DataStatusEnum;
 import com.y3tu.yao.common.enums.ResourceTypeEnum;
+import com.y3tu.yao.feign.vo.ActionEntryVO;
+import com.y3tu.yao.feign.vo.MenuVO;
 import com.y3tu.yao.feign.vo.ResourceVO;
-import com.y3tu.yao.upms.mapper.ResourceMapper;
+import com.y3tu.yao.feign.vo.RoleVO;
+import com.y3tu.yao.upms.mapper.*;
 import com.y3tu.yao.upms.model.entity.Resource;
+import com.y3tu.yao.upms.model.entity.RoleActionEntry;
+import com.y3tu.yao.upms.model.entity.User;
 import com.y3tu.yao.upms.service.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.y3tu.yao.upms.constant.UpmsConstant.ROOT_MENU;
+import static com.y3tu.yao.upms.constant.UpmsConstant.ResourceCheck.IS_CHECK;
+import static com.y3tu.yao.upms.constant.UpmsConstant.ResourceCheck.NOT_CHECK;
 
 /**
  * <p>
@@ -31,6 +40,21 @@ public class ResourceServiceImpl extends BaseServiceImpl<ResourceMapper, Resourc
 
     @Autowired
     ResourceMapper resourceMapper;
+
+    @Autowired
+    UserMapper userMapper;
+
+    @Autowired
+    RoleMapper roleMapper;
+
+    @Autowired
+    MenuMapper menuMapper;
+
+    @Autowired
+    ActionEntryMapper actionEntryMapper;
+
+    @Autowired
+    RoleActionEntryMapper roleActionEntryMapper;
 
     /**
      * 资源树根节点id
@@ -124,5 +148,195 @@ public class ResourceServiceImpl extends BaseServiceImpl<ResourceMapper, Resourc
     @Override
     public List<ResourceVO> currentResource() {
         return null;
+    }
+
+    @Override
+    public ResourceVO getResourceByUid(Integer uid) {
+        //  为ResourceVO里面的用户信息赋值
+        ResourceVO resourceVO = new ResourceVO();
+        User user = userMapper.selectById(uid);
+        resourceVO.setUsername(user.getUsername());
+        resourceVO.setFullName(user.getFullName());
+
+        // 为ResourceVO里面的role赋值(根据用户信息查出角色)
+        // 根据用户id查询角色
+        RoleVO roleVO = roleMapper.selectRoleByUserId(user.getId());
+        if (Objects.isNull(roleVO)) {
+            return resourceVO;
+        }
+
+        // 查询出所有的菜单下面的所有按钮.放到roleVo里面去 . 再查出来角色拥有的菜单和按钮,去匹配
+        // 查所有菜单
+        List<MenuVO> allMenus = menuMapper.selectAll();
+        List<MenuVO> roleMenus = menuMapper.findMenuByRoleId(roleVO.getId());
+        // 如果角色没有分配菜单 ,直接返回
+        if (roleMenus.isEmpty()) {
+            List<MenuVO> menuTree = buildTree(allMenus);
+            //把菜单信息放到角色信息对象里
+            roleVO.setMenus(menuTree);
+            resourceVO.setRoleVO(roleVO);
+            return resourceVO;
+        }
+        checkMenu(allMenus, roleMenus);
+        // 查所有按钮
+        List<ActionEntryVO> allActionEntrys = actionEntryMapper.selectAll();
+        List<RoleActionEntry> roleActions = roleActionEntryMapper.selectByRoleId(roleVO.getId());
+        checkAction(allActionEntrys, roleActions);
+
+        // 构建返回对象
+        resourceVO.setRoleVO(structureRoleVo(roleVO, allMenus, allActionEntrys));
+        return resourceVO;
+    }
+
+
+    @Override
+    public RoleVO getResourceByRoleId(Integer roleId) {
+        //查询角色
+        RoleVO roleVO = roleMapper.selectByPrimaryKey(roleId);
+        roleMapper.selectById(roleId);
+
+        // 查询出所有的菜单下面的所有按钮.放到roleVo里面去 . 再查出来角色拥有的菜单和按钮,去匹配
+        // 查所有菜单
+        List<MenuVO> allMenus = menuMapper.selectAll();
+        // 查询所有按钮
+        List<ActionEntryVO> allActionEntrys = actionEntryMapper.selectAll();
+        if (Objects.isNull(roleVO)) {
+            roleVO = new RoleVO();
+            allMenus.forEach(menuVO -> menuVO.setIsCheck(NOT_CHECK));
+            allActionEntrys.forEach(actionEntryVO -> actionEntryVO.setIsCheck(NOT_CHECK));
+            return structureRoleVo(roleVO, allMenus, allActionEntrys);
+        }
+        List<MenuVO> roleMenus = menuMapper.findMenuByRoleId(roleId);
+
+
+        if (roleMenus.isEmpty()) {
+            return structureRoleVo(roleVO, allMenus, allActionEntrys);
+        }
+        // 选中菜单
+        checkMenu(allMenus, roleMenus);
+
+        // 选中按钮
+        List<RoleActionEntry> roleActions = roleActionEntryMapper.selectByRoleId(roleId);
+        checkAction(allActionEntrys, roleActions);
+
+        return structureRoleVo(roleVO, allMenus, allActionEntrys);
+    }
+
+    private RoleVO structureRoleVo(RoleVO roleVO, List<MenuVO> allMenus, List<ActionEntryVO> allActionEntrys) {
+        // 把菜单和按钮匹配
+        matchMenuAction(allMenus, allActionEntrys);
+
+        // 构建菜单树
+        List<MenuVO> menuTree = buildTree(allMenus);
+        //把菜单信息放到角色信息对象里
+        roleVO.setMenus(menuTree);
+        return roleVO;
+    }
+
+    /**
+     * 功能描述 :选中按钮
+     *
+     * @param allActionEntrys 全部按钮列表
+     * @param roleActions     角色拥有按钮列表
+     * @return void
+     * @author zht
+     * @date 2019/11/23
+     */
+    private void checkAction(List<ActionEntryVO> allActionEntrys, List<RoleActionEntry> roleActions) {
+        if (!roleActions.isEmpty()) {
+            for (ActionEntryVO action : allActionEntrys) {
+                for (RoleActionEntry roleAction : roleActions) {
+                    if (action.getId().equals(roleAction.getActionEntryId())) {
+                        action.setIsCheck(IS_CHECK);
+                        break;
+                    } else {
+                        action.setIsCheck(NOT_CHECK);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 功能描述 :选中菜单
+     *
+     * @param allMenus  所有菜单列表
+     * @param roleMenus 角色拥有菜单列表
+     * @return void
+     * @author zht
+     * @date 2019/11/23
+     */
+    private void checkMenu(List<MenuVO> allMenus, List<MenuVO> roleMenus) {
+        for (MenuVO menuVO : allMenus) {
+            for (MenuVO roleMenu : roleMenus) {
+                if (roleMenu.getId().equals(menuVO.getId())) {
+                    menuVO.setIsCheck(IS_CHECK);
+                    break;
+                } else {
+                    menuVO.setIsCheck(NOT_CHECK);
+                }
+            }
+        }
+    }
+
+    /**
+     * 功能描述 : 菜单匹配按钮
+     *
+     * @param menus   菜单列表
+     * @param actions 按钮列表
+     * @return void
+     * @author zht
+     * @date 2019/11/23
+     */
+    private void matchMenuAction(List<MenuVO> menus, List<ActionEntryVO> actions) {
+        menus.forEach(menuVO -> {
+            List<ActionEntryVO> actionEntrySet = new LinkedList<>();
+            actions.forEach(actionEntryVO -> {
+                if (actionEntryVO.getMenuId().equals(menuVO.getId())) {
+                    actionEntrySet.add(actionEntryVO);
+                }
+                menuVO.setActionEntrySet(actionEntrySet);
+            });
+        });
+    }
+
+    /**
+     * 功能描述 :把menuList转成树
+     *
+     * @param menuList
+     * @return java.util.List<com.y3tu.tool.core.pojo.TreeNode                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               com.y3tu.yao.common.vo.sys.MenuVO>>
+     * @author zht
+     * @date 2019/11/23
+     */
+    private List<TreeNode<MenuVO>> getTreeNodes(List<MenuVO> menuList) {
+        List<TreeNode<MenuVO>> treeNodeList = menuList.stream().map(menuVO -> new TreeNode<>(menuVO.getId().toString(),
+                menuVO.getName(), menuVO.getParentId(), menuVO)).collect(Collectors.toList());
+        return TreeUtil.buildList(treeNodeList, ROOT_MENU);
+    }
+
+    /**
+     * 功能描述 :构建树 与上面 getTreeNodes二选一
+     *
+     * @param menuList
+     * @return java.util.Map<java.lang.String                                                               ,                                                               com.y3tu.yao.common.vo.sys.MenuVO>
+     * @author zht
+     * @date 2019/11/23
+     */
+    private List<MenuVO> buildTree(List<MenuVO> menuList) {
+        List<MenuVO> treeList = new LinkedList<>();
+        for (MenuVO treeNode : menuList) {
+            if (ROOT_MENU.equals(treeNode.getParentId())) {
+                treeList.add(treeNode);
+            }
+            for (MenuVO menu : menuList) {
+                if (!Objects.isNull(menu.getParentId()) && menu.getParentId().equals(treeNode.getId().toString())) {
+                    if (treeNode.getChildren() == null) {
+                        treeNode.setChildren(new LinkedList<>());
+                    }
+                    treeNode.add(menu);
+                }
+            }
+        }
+        return treeList;
     }
 }

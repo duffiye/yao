@@ -35,23 +35,6 @@ public class MenuController {
     private ResourceService resourceService;
     @Autowired
     private RoleResourceService roleResourceService;
-    @Autowired
-    private UserRoleService userRoleService;
-
-
-    /**
-     * 获取当前用户的菜单树
-     *
-     * @return
-     */
-    @Log(actionName = "根据token查询当前用户权限的菜单树")
-    @ApiOperation(value = "获取当前用户的菜单树", notes = "根据token查询当前用户权限的菜单树", httpMethod = "GET")
-    @GetMapping("/menu/tree/{userId}")
-    public R getMenuTree(@PathVariable("userId") String userId) {
-        List<Role> roleList = userRoleService.findByUserId(userId);
-        List<String> roleCodes = roleList.stream().map(role -> role.getRoleCode()).collect(Collectors.toList());
-        return R.success(resourceService.getMenuTreeByRoleCodes(roleCodes));
-    }
 
     /**
      * 获取所有的菜单树

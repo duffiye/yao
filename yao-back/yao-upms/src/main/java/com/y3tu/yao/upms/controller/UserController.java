@@ -1,45 +1,38 @@
 package com.y3tu.yao.upms.controller;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.y3tu.tool.core.collection.CollectionUtil;
-import com.y3tu.tool.core.date.DateUtil;
 import com.y3tu.tool.core.pojo.R;
 import com.y3tu.tool.core.util.ObjectUtil;
 import com.y3tu.tool.core.util.StrUtil;
-import com.y3tu.tool.web.annotation.MethodMapping;
 import com.y3tu.tool.web.base.controller.BaseController;
-import com.y3tu.tool.web.base.pojo.PageInfo;
-import com.y3tu.yao.common.enums.UserStatusEnum;
 import com.y3tu.yao.common.util.UserUtil;
 import com.y3tu.yao.feign.constant.ServerNameConstants;
-import com.y3tu.yao.feign.vo.ResourceVO;
-import com.y3tu.yao.feign.vo.RoleVO;
 import com.y3tu.yao.feign.vo.UserVO;
 import com.y3tu.yao.log.starter.annotation.Log;
 import com.y3tu.yao.log.starter.constant.ActionTypeEnum;
 import com.y3tu.yao.upms.model.dto.UserDTO;
-import com.y3tu.yao.upms.model.entity.Resource;
 import com.y3tu.yao.upms.model.entity.Role;
 import com.y3tu.yao.upms.model.entity.User;
 import com.y3tu.yao.upms.model.entity.UserRole;
-import com.y3tu.yao.upms.service.*;
+import com.y3tu.yao.upms.model.query.user.UserAddQuery;
+import com.y3tu.yao.upms.model.query.user.UserQuery;
+import com.y3tu.yao.upms.model.query.user.UserUpdateQuery;
+import com.y3tu.yao.upms.service.RoleService;
+import com.y3tu.yao.upms.service.UserRoleService;
+import com.y3tu.yao.upms.service.UserService;
+import com.y3tu.yao.upms.utils.BeforeValidator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
+import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -61,10 +54,6 @@ public class UserController extends BaseController<UserService, User> {
     private RoleService roleService;
     @Autowired
     private UserRoleService userRoleService;
-    @Autowired
-    private ResourceService resourceService;
-    @Autowired
-    private DepartmentService departmentService;
     @Autowired
     private RedisTemplate redisTemplate;
     @Autowired
@@ -127,6 +116,46 @@ public class UserController extends BaseController<UserService, User> {
         return R.success();
     }
 
+    /**
+     * 获取用户分页数据
+     *
+     * @param userQuery
+     * @return
+     */
+    @PostMapping("/page")
+    public R page(@RequestBody UserQuery userQuery) {
+        String userId = UserUtil.getUserId(request);
+        userQuery.setUserId(Integer.valueOf(userId));
+        return R.success(userService.pageByCondition(userQuery));
+    }
+
+    @PatchMapping("/{id}")
+    public R resetPassWord(@PathVariable("id") String id) {
+        userService.resetPassWord(id);
+        return R.success();
+    }
+
+    @PostMapping
+    public R addUser(@Valid @RequestBody UserAddQuery userAddQuery, BindingResult bindingResult) {
+        new BeforeValidator(bindingResult).validate();
+        userService.addUser(userAddQuery);
+        return R.success();
+    }
+
+
+    @PutMapping
+    public R updateUser(@RequestBody UserUpdateQuery query) {
+        userService.updateUser(query);
+        return R.success();
+    }
+
+    @PatchMapping("/{uid}/{state}")
+    public R changeState(@PathVariable(value = "uid") String uid,
+                         @PathVariable(value = "state") Integer state) {
+        userService.changeState(uid, state);
+        return R.success();
+    }
+
 
     @PostMapping(value = "/unlock")
     @Log(actionName = "页面解锁", actionType = ActionTypeEnum.OTHER)
@@ -140,77 +169,6 @@ public class UserController extends BaseController<UserService, User> {
         return R.success();
     }
 
-    /**
-     * 获取用户分页数据
-     *
-     * @param pageInfo
-     * @return
-     */
-    @Override
-    @ApiOperation(value = "多条件分页获取用户列表")
-    @MethodMapping(method = RequestMethod.POST)
-    @Log(actionName = "查询用户分页数据")
-    public R page(@RequestBody PageInfo pageInfo) {
-
-        PageInfo<User> page = userService.page(pageInfo);
-        List<UserVO> userVOS = new ArrayList<>();
-        for (User user : page.getRecords()) {
-            UserVO userVO = new UserVO();
-            BeanUtils.copyProperties(user, userVO);
-            // 关联角色
-            List<Role> roles = userRoleService.findByUserId(user.getId());
-            List<RoleVO> roleVOS = roles.stream().map(role -> {
-                RoleVO roleVO = new RoleVO();
-                BeanUtils.copyProperties(role, roleVO);
-                return roleVO;
-            }).collect(Collectors.toList());
-
-            //userVO.setRoles(roleVOS);
-            //关联资源权限
-            if (roles.size() > 0) {
-                Set<Resource> resources = resourceService.getResourceRoleCodes(roles.stream().map(role -> role.getRoleCode()).collect(Collectors.toList()));
-                Set<ResourceVO> resourceVOS = resources.stream().map(resource -> {
-                            ResourceVO resourceVO = new ResourceVO();
-                            BeanUtils.copyProperties(resource, resourceVO);
-                            return resourceVO;
-                        }
-                ).collect(Collectors.toSet());
-                //userVO.setResources(resourceVOS);
-            }
-            userVOS.add(userVO);
-        }
-        PageInfo pageInfoCopy = new PageInfo();
-        BeanUtils.copyProperties(pageInfo, pageInfoCopy);
-        pageInfoCopy.setRecords(userVOS);
-        return R.success(pageInfoCopy);
-    }
-
-    @GetMapping(value = "/disable/{userId}")
-    @Log(actionName = "后台禁用用户", actionType = ActionTypeEnum.EDIT)
-    @ApiOperation(value = "后台禁用用户")
-    public R disable(@ApiParam("用户唯一id标识") @PathVariable String userId) {
-        User user = userService.getById(userId);
-        if (user == null) {
-            return R.warn("通过userId获取用户失败");
-        }
-        user.setStatus(1);
-        userService.updateById(user);
-        return R.success();
-    }
-
-    @RequestMapping(value = "/enable/{userId}", method = RequestMethod.POST)
-    @Log(actionName = "后台启用用户", actionType = ActionTypeEnum.EDIT)
-    @ApiOperation(value = "后台启用用户")
-    public R enable(@ApiParam("用户唯一id标识") @PathVariable String userId) {
-
-        User user = userService.getById(userId);
-        if (user == null) {
-            return R.warn("通过userId获取用户失败");
-        }
-        user.setStatus(UserStatusEnum.NORMAL.getCode());
-        userService.updateById(user);
-        return R.success();
-    }
 
     @ApiOperation(value = "批量通过ids删除")
     @DeleteMapping(value = "/delByIds/{ids}")
@@ -223,88 +181,6 @@ public class UserController extends BaseController<UserService, User> {
             userRoleService.remove(new QueryWrapper<UserRole>().eq("user_id", id));
         }
         return R.success();
-    }
-
-    @PostMapping(value = "/save")
-    @Log(actionName = "新增用户", actionType = ActionTypeEnum.ADD)
-    @ApiOperation(value = "添加用户")
-    public R save(@RequestBody UserDTO userDTO) {
-        if (StrUtil.isBlank(userDTO.getUsername())) {
-            return R.error("缺少必需表单字段");
-        }
-
-        if (CollectionUtil.isNotEmpty(userService.list(new QueryWrapper<User>().eq("username", userDTO.getUsername())))) {
-            return R.error("该用户名已被注册");
-        }
-
-        //如果不设置密码 默认密码为123456
-        String encryptPass = "";
-        if (StrUtil.isEmpty(userDTO.getPassword())) {
-            encryptPass = new BCryptPasswordEncoder().encode("123456");
-        } else {
-            encryptPass = new BCryptPasswordEncoder().encode(userDTO.getPassword());
-        }
-        userDTO.setPassword(encryptPass);
-        userDTO.setCreateTime(DateUtil.date());
-        userDTO.setDelFlag(0);
-        User user = new User();
-        BeanUtils.copyProperties(userDTO, user);
-        userService.save(user);
-        addRole(userDTO.getRoles(), user.getId());
-        return R.success(user);
-    }
-
-    @PutMapping(value = "/edit")
-    @Log(actionName = "编辑用户信息", actionType = ActionTypeEnum.EDIT)
-    public R edit(@RequestBody UserDTO user) {
-
-        User old = userService.getById(user.getId());
-        //若修改了用户名
-        if (!old.getUsername().equals(user.getUsername())) {
-            //判断新用户名是否存在
-            if (userService.findByUsernameAndStatus(user.getUsername()) != null) {
-                return R.error("该用户名已被存在");
-            }
-        }
-        // 若修改了手机和邮箱判断是否唯一
-        if (!old.getMobile().equals(user.getMobile()) && userService.findByMobile(user.getMobile()) != null) {
-            return R.error("该手机号已绑定其他账户");
-        }
-        if (StrUtil.isNotEmpty(old.getEmail()) && StrUtil.isNotEmpty(user.getEmail())) {
-            if (!old.getEmail().equals(user.getEmail()) && userService.findByMobile(user.getEmail()) != null) {
-                return R.error("该邮箱已绑定其他账户");
-            }
-        }
-
-        user.setPassword(old.getPassword());
-        BeanUtil.copyProperties(user, old, new CopyOptions().setIgnoreNullValue(true));
-        if (!userService.updateById(old)) {
-            return R.error("修改失败");
-        }
-
-        //删除该用户角色
-        userRoleService.remove(new QueryWrapper<UserRole>().eq("user_id", user.getId()));
-        addRole(user.getRoles(), user.getId());
-        return R.success();
-    }
-
-
-    /**
-     * 根据用户id和角色id添加用户角色关联信息
-     *
-     * @param roleList
-     * @param userId
-     */
-    private void addRole(List<Role> roleList, String userId) {
-        if (CollectionUtil.isNotEmpty(roleList)) {
-            //添加角色
-            for (Role role : roleList) {
-                UserRole ur = new UserRole();
-                ur.setUserId(userId);
-                ur.setRoleId(role.getId());
-                userRoleService.save(ur);
-            }
-        }
     }
 
 

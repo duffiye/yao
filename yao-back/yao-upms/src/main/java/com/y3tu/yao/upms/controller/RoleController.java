@@ -7,6 +7,7 @@ import com.y3tu.tool.web.base.controller.BaseController;
 import com.y3tu.tool.web.base.pojo.PageInfo;
 import com.y3tu.yao.common.enums.DataStatusEnum;
 import com.y3tu.yao.feign.constant.ServerNameConstants;
+import com.y3tu.yao.feign.vo.RoleVO;
 import com.y3tu.yao.log.starter.annotation.Log;
 import com.y3tu.yao.log.starter.constant.ActionTypeEnum;
 import com.y3tu.yao.upms.model.entity.*;
@@ -181,6 +182,19 @@ public class RoleController extends BaseController<RoleService, Role> {
             roleDepartmentService.remove(new QueryWrapper<RoleDepartment>().eq("role_id", id));
         }
         return super.delByIds(ids);
+    }
+
+
+    /**
+     *功能描述 :服务内部调用 根据用户ID查询角色信息
+     * @author zht
+     * @date 2019/12/13
+     * @param userId
+     * @return com.y3tu.yao.feign.vo.RoleVO
+     */
+    @GetMapping(value = "/{userId}")
+    public RoleVO getRoleVoByUserId(@PathVariable(value = "userId") String userId) {
+        return userRoleService.findRoleVoByUserId(userId);
     }
 
 }

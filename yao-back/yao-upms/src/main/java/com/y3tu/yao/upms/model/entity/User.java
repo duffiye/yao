@@ -5,13 +5,13 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.y3tu.tool.web.base.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -23,94 +23,75 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("t_user")
+@TableName("sys_user")
 @AllArgsConstructor
 @NoArgsConstructor
 public class User extends BaseEntity {
-    /**
-     * 主键
-     */
-    @TableId(type = IdType.INPUT)
-    protected String id;
-    /**
-     * 创建人
-     */
-    @TableField("create_by")
-    private String createBy;
-    /**
-     * 创建时间
-     */
-    @TableField("create_time")
+
+    @TableId(value = "id", type = IdType.INPUT)
+    private String id;
+
+    @TableField("created_at")
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createTime;
-    /**
-     * 更新人
-     */
-    @TableField("update_by")
-    private String updateBy;
-    /**
-     * 更新时间
-     */
-    @TableField("update_time")
+    private Date createdAt;
+
+    @TableField("updated_at")
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date updateTime;
+    private Date updatedAt;
+
+    @TableField("deleted_at")
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date deletedAt;
+
     /**
-     * 地址
+     * uid
      */
-    private String address;
-    /**
-     * 头像
-     */
-    private String avatar;
-    /**
-     * 简介
-     */
-    private String description;
-    /**
-     * 邮箱
-     */
-    private String email;
+    private Integer uid;
+
+
     /**
      * 手机
      */
-    private String mobile;
-    /**
-     * 昵称
-     */
-    @TableField("nick_name")
-    private String nickName;
-    /**
-     * 密码
-     */
-    private String password;
-    /**
-     * 性别
-     */
-    private Integer sex;
-    /**
-     * 状态 0：正常 1 锁定
-     */
-    private Integer status;
+    private String phone;
+
     /**
      * 用户名
      */
     private String username;
-    /**
-     * 是否删除 0:否;1:是
-     */
-    @TableField("del_flag")
-    private Integer delFlag;
+
+    @JsonProperty(value = "full_name")
+    private String fullName;
 
     /**
-     * 部门Id
+     * 密码
      */
-    @TableField("department_id")
-    private String departmentId;
+    private String password;
 
     /**
-     * 部门名称
+     * 最后登录时间
      */
-    @TableField(exist = false)
-    private String departmentName;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date lastLoginAt;
+
+    /**
+     * 最后登录IP
+     */
+    private String lastLoginIpAt;
+
+    /**
+     * 重试次数
+     */
+    private Integer retryTimes;
+
+    /**
+     * 状态
+     */
+    private Integer state;
+
+    /**
+     * 角色代码
+     */
+    private String roleCode;
+
 
 }

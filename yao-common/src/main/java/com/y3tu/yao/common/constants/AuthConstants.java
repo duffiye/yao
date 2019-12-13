@@ -45,7 +45,7 @@ public interface AuthConstants {
     /**
      * JdbcClientDetailsService 查询语句
      */
-    String BASE_FIND_STATEMENT = "select " + CLIENT_FIELDS + " from sys_oauth_client_details";
+    String BASE_FIND_STATEMENT = "select " + CLIENT_FIELDS + " from t_oauth_client_details";
 
     /**
      * 默认的查询语句

@@ -1,6 +1,7 @@
 package com.y3tu.yao.upms.service;
 
 import com.y3tu.yao.feign.vo.ResourceVO;
+import com.y3tu.yao.feign.vo.RoleVO;
 import com.y3tu.yao.upms.model.entity.Resource;
 import com.y3tu.tool.core.pojo.TreeNode;
 import com.y3tu.tool.web.base.service.BaseService;
@@ -64,5 +65,26 @@ public interface ResourceService extends BaseService<Resource> {
      * @return 当前用户的菜单权限资源
      */
     List<ResourceVO> currentResource();
+
+
+    /**
+     * 功能描述 :根据用户ID查询资源
+     *
+     * @param uid
+     * @return com.y3tu.yao.common.vo.sys.ResourceVO
+     * @author zht
+     * @date 2019/11/23
+     */
+    ResourceVO getResourceByUid(Integer uid);
+
+    /**
+     * 功能描述 :根据角色查询资源权限
+     *
+     * @param roleId 角色ID
+     * @return com.y3tu.yao.upms.model.vo.sys.RoleVO
+     * @author zht
+     * @date 2019/11/23
+     */
+    RoleVO getResourceByRoleId(Integer roleId);
 
 }
