@@ -1,15 +1,16 @@
 package com.y3tu.yao.gateway.exception;
 
-import com.y3tu.tool.core.exception.BaseException;
 import com.y3tu.tool.core.exception.ErrorEnum;
 import com.y3tu.tool.core.exception.IError;
+import com.y3tu.tool.core.exception.SystemException;
 
 /**
  * 未授权或者token过期异常
+ *
  * @author y3tu
  * @date 2019-05-17
  */
-public class UnAuthorizedException extends BaseException {
+public class UnAuthorizedException extends SystemException {
     public UnAuthorizedException() {
     }
 

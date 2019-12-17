@@ -1,6 +1,8 @@
 package com.y3tu.yao.common.util;
 
 /*import cn.hutool.core.codec.Base64;*/
+
+import cn.hutool.core.codec.Base64;
 import com.y3tu.yao.common.constants.AuthConstants;
 import com.y3tu.yao.common.constants.UserConstants;
 import io.jsonwebtoken.Claims;
@@ -46,9 +48,8 @@ public class UserUtil {
      */
     public static Claims getClaims(String token) {
 
-        /*String key = Base64.encode(AuthConstants.SIGN_KEY.getBytes());
-        Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();*/
-        return null;
+        String key = Base64.encode(AuthConstants.SIGN_KEY.getBytes());
+        return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
     }
 
     /**

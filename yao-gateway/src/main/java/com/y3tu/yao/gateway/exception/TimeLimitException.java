@@ -1,13 +1,13 @@
 package com.y3tu.yao.gateway.exception;
 
-import com.y3tu.tool.core.exception.BaseException;
 import com.y3tu.tool.core.exception.ErrorEnum;
 import com.y3tu.tool.core.exception.IError;
+import com.y3tu.tool.core.exception.SystemException;
 
 /**
- * 请求头信息错误异常
+ * 请求时间在限值之内
  */
-public class TimeLimitException extends BaseException {
+public class TimeLimitException extends SystemException {
     public TimeLimitException() {
     }
 

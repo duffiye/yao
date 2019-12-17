@@ -1,2 +1,14 @@
-com\y3tu\yao\feign\AccessFeignClient.class
-com\y3tu\yao\model\Access.class
+com\y3tu\yao\feign\client\AuthenticationFeignClient.class
+com\y3tu\yao\feign\vo\RoleVO.class
+com\y3tu\yao\feign\client\UserFeignClient.class
+com\y3tu\yao\feign\client\UserRoleFeignClient$UserRoleFeignConfig.class
+com\y3tu\yao\feign\vo\ResourceVO.class
+com\y3tu\yao\feign\model\Access.class
+com\y3tu\yao\feign\vo\ZuulRouteVO.class
+com\y3tu\yao\feign\vo\ActionEntryVO.class
+com\y3tu\yao\feign\constant\ServerNameConstants.class
+com\y3tu\yao\feign\client\UserRoleFeignClient.class
+com\y3tu\yao\feign\vo\MenuVO.class
+com\y3tu\yao\feign\client\MenuFeignClient.class
+com\y3tu\yao\feign\client\AccessFeignClient.class
+com\y3tu\yao\feign\vo\UserVO.class

@@ -1,14 +1,15 @@
 package com.y3tu.yao.gateway.exception;
 
-import com.y3tu.tool.core.exception.BaseException;
 import com.y3tu.tool.core.exception.ErrorEnum;
 import com.y3tu.tool.core.exception.IError;
+import com.y3tu.tool.core.exception.SystemException;
 
 /**
  * 验证码异常
+ *
  * @author y3tu
  */
-public class ValidateCodeException extends BaseException {
+public class ValidateCodeException extends SystemException {
     public ValidateCodeException() {
     }
 

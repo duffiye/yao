@@ -1,7 +1,6 @@
 package com.y3tu.yao.gateway.exception;
 
-import com.y3tu.tool.core.exception.ErrorEnum;
-import com.y3tu.tool.core.exception.ServerCallException;
+import com.y3tu.tool.core.exception.BaseException;
 import com.y3tu.tool.core.pojo.R;
 import io.netty.channel.ConnectTimeoutException;
 import lombok.extern.slf4j.Slf4j;
@@ -42,14 +41,10 @@ public class GateWayExceptionHandlerAdvice {
         return R.error("403", ex.getMessage());
     }
 
-    public R handle(UnAuthorizedException ex) {
-        log.error("UnAuthorizedException exception:{}", ex.getMessage());
-        return R.error("401", ex.getMessage());
-    }
 
-    public R handle(ServerCallException ex) {
-        log.error("ServerCallException exception:{}", ex.getMessage());
-        return R.error(ex.getMessage(), ErrorEnum.SERVICE_CALL_ERROR);
+    public R handle(BaseException ex) {
+        log.error("BaseException exception:{}", ex.getMessage());
+        return R.error(ex.getCode(), ex.getMessage());
     }
 
     public R handle(Exception ex) {
@@ -70,18 +65,16 @@ public class GateWayExceptionHandlerAdvice {
         } else if (throwable instanceof NoPermissionException) {
             status = HttpStatus.FORBIDDEN.value();
             result = handle((NoPermissionException) throwable);
-        } else if (throwable instanceof UnAuthorizedException) {
-            status = HttpStatus.UNAUTHORIZED.value();
-            result = handle((UnAuthorizedException) throwable);
-        }else if (throwable instanceof ServerCallException) {
-            result = handle((ServerCallException) throwable);
+        } else if (throwable instanceof BaseException) {
+            status = HttpStatus.OK.value();
+            result = handle((BaseException) throwable);
         } else if (throwable instanceof RuntimeException) {
             result = handle((RuntimeException) throwable);
         } else if (throwable instanceof Exception) {
             result = handle((Exception) throwable);
         }
 
-        return  ServerResponse.status(status)
+        return ServerResponse.status(status)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .body(BodyInserters.fromObject(result));
     }

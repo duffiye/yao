@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class UserVO {
 
-    private Integer id;
+    private String id;
     private String uid;
     private String email;
     private String phone;

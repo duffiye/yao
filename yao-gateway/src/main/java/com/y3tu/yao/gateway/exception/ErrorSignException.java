@@ -1,13 +1,13 @@
 package com.y3tu.yao.gateway.exception;
 
-import com.y3tu.tool.core.exception.BaseException;
 import com.y3tu.tool.core.exception.ErrorEnum;
 import com.y3tu.tool.core.exception.IError;
+import com.y3tu.tool.core.exception.SystemException;
 
 /**
  * 请求头信息错误异常
  */
-public class ErrorSignException extends BaseException {
+public class ErrorSignException extends SystemException {
     public ErrorSignException() {
     }
 

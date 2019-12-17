@@ -4,8 +4,14 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, role_code as roleCode,create_by AS createBy, create_time AS createTime, update_by AS updateBy, update_time AS updateTime, name,
-    del_flag AS delFlag, default_role AS defaultRole,description
+        id,
+        `name`,
+        code,
+        remark,
+        created_at,
+        updated_at,
+        deleted_at,
+        state
     </sql>
 
 

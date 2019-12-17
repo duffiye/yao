@@ -197,4 +197,9 @@
     </select>
 
 
+    <select id="selectByUserID" resultType="com.y3tu.yao.upms.model.entity.User">
+        <include refid="selectUserVo"/>
+        WHERE su.id = #{id}
+    </select>
+
 </mapper>

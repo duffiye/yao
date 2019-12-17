@@ -82,5 +82,15 @@ public interface UserMapper extends BaseMapper<User> {
      */
     User selectUserByUid(String uid);
 
+    /**
+     * 功能描述 :根据uid 查询用户信息
+     *
+     * @param id id
+     * @return
+     * @author zht
+     * @date 2019/12/3
+     */
+    User selectByUserID(Integer id);
+
 
 }

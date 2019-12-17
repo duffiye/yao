@@ -193,7 +193,6 @@ public class ResourceServiceImpl extends BaseServiceImpl<ResourceMapper, Resourc
     public RoleVO getResourceByRoleId(Integer roleId) {
         //查询角色
         RoleVO roleVO = roleMapper.selectByPrimaryKey(roleId);
-        roleMapper.selectById(roleId);
 
         // 查询出所有的菜单下面的所有按钮.放到roleVo里面去 . 再查出来角色拥有的菜单和按钮,去匹配
         // 查所有菜单
@@ -304,7 +303,7 @@ public class ResourceServiceImpl extends BaseServiceImpl<ResourceMapper, Resourc
      * 功能描述 :把menuList转成树
      *
      * @param menuList
-     * @return java.util.List<com.y3tu.tool.core.pojo.TreeNode                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               com.y3tu.yao.common.vo.sys.MenuVO>>
+     * @return java.util.List<com.y3tu.tool.core.pojo.TreeNode                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               com.y3tu.yao.common.vo.sys.MenuVO>>
      * @author zht
      * @date 2019/11/23
      */
@@ -318,7 +317,7 @@ public class ResourceServiceImpl extends BaseServiceImpl<ResourceMapper, Resourc
      * 功能描述 :构建树 与上面 getTreeNodes二选一
      *
      * @param menuList
-     * @return java.util.Map<java.lang.String                                                               ,                                                               com.y3tu.yao.common.vo.sys.MenuVO>
+     * @return java.util.Map<java.lang.String                                                                                                                               ,                                                                                                                               com.y3tu.yao.common.vo.sys.MenuVO>
      * @author zht
      * @date 2019/11/23
      */

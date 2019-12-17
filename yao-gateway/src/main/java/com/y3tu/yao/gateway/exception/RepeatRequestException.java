@@ -1,13 +1,13 @@
 package com.y3tu.yao.gateway.exception;
 
-import com.y3tu.tool.core.exception.BaseException;
 import com.y3tu.tool.core.exception.ErrorEnum;
 import com.y3tu.tool.core.exception.IError;
+import com.y3tu.tool.core.exception.SystemException;
 
 /**
  * 没有权限异常
  */
-public class RepeatRequestException extends BaseException {
+public class RepeatRequestException extends SystemException {
     public RepeatRequestException() {
     }
 

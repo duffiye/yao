@@ -3,7 +3,7 @@ package com.y3tu.yao.gateway.utils;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.MessageDigest;
-import java.util.*;
+import java.util.Base64;
 
 /**
  * ClassName: SignUtil
@@ -14,41 +14,26 @@ import java.util.*;
  */
 public class SignUtil {
     private final static String secretKey = "ndE2jdZNFixH9G6Aidsfyf7lYT3PxW";
+
     /**
      * @Author : zht
      * @Description :根据签名算法得出签名---参数按照参数名ASCII码从小到大排序（字典序）
      * @Date : 10:55 2018/6/5
      **/
     public static void main(String[] args) {
-        SortedMap<Object, Object> parameters = new TreeMap<Object, Object>();
-        String merchantId = "190010002";
-        String businessType = "1005";
-        String outTradeNo = "1400000001";
-        parameters.put("merchantId", merchantId);
-        parameters.put("businessType", businessType);
-        parameters.put("outTradeNo", outTradeNo);
+        String timestamp = "20191217102050";
+        String nonce = "123123";
+        String bodyString = "{\"page_num\":1,\"page_size\":10,\"root\":{\"child\":{\"test\":1}}}";
         //指定字符集UTF-8
         String characterEncoding = "UTF-8";
-        String mySign = createSign(characterEncoding, parameters);
+        String mySign = createSign(characterEncoding, timestamp, nonce, bodyString);
+        System.out.println(mySign);
     }
 
 
-    public static String createSign(String characterEncoding, SortedMap<Object, Object> parameters) {
-        StringBuilder sbKey = new StringBuilder();
-        //所有参与传参的参数按照accsii排序（升序）
-        Set es = parameters.entrySet();
-        Iterator it = es.iterator();
-        while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry) it.next();
-            String k = (String) entry.getKey();
-            Object v = entry.getValue();
-            //空值不传递，不参与签名组串
-            if (null != v && !"".equals(v)) {
-                sbKey.append(k + "=" + v + "&");
-            }
-        }
+    public static String createSign(String characterEncoding, String timestamp, String nonce, String bodyString) {
         //把参数做MD5加密
-        String signValue = encryptWithMD5(sbKey.toString(), characterEncoding).toUpperCase();
+        String signValue = encryptWithMD5(timestamp + nonce + bodyString, characterEncoding).toUpperCase();
         //使用私钥经SHA256签名算法生成签名值
         signValue = sha256_HMAC(signValue, secretKey);
         //做BASE64编码后的sign

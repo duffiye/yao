@@ -1,16 +1,15 @@
 package com.y3tu.yao.upms.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
-import com.y3tu.tool.core.collection.CollectionUtil;
 import com.y3tu.tool.core.exception.BusinessException;
 import com.y3tu.tool.web.base.service.impl.BaseServiceImpl;
-import com.y3tu.yao.common.enums.UserStatusEnum;
 import com.y3tu.yao.feign.vo.UserVO;
 import com.y3tu.yao.upms.mapper.*;
 import com.y3tu.yao.upms.model.dto.UserDTO;
-import com.y3tu.yao.upms.model.entity.*;
+import com.y3tu.yao.upms.model.entity.BaseUser;
+import com.y3tu.yao.upms.model.entity.STFStaff;
+import com.y3tu.yao.upms.model.entity.User;
 import com.y3tu.yao.upms.model.query.user.UserAddQuery;
 import com.y3tu.yao.upms.model.query.user.UserQuery;
 import com.y3tu.yao.upms.model.query.user.UserUpdateQuery;
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.y3tu.yao.common.constants.DateConstant.NORM_DATETIME_PATTERN;
 import static com.y3tu.yao.upms.constant.UpmsConstant.RoleCode.SUPER_ADMIN;
@@ -72,11 +70,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     public PageVO<UserQueryVO> pageByCondition(UserQuery userQuery) {
         Integer userId = userQuery.getUserId();
 
-        User user = userMapper.selectById(userId);
-        if (user.getRoleCode().equals(SUPER_ADMIN)){
+        User user = userMapper.selectByUserID(userId);
+        if (user.getRoleCode().equals(SUPER_ADMIN)) {
             PageHelper.startPage(userQuery.getPageNum(), userQuery.getPageSize(), userQuery.getPageNum() != 0);
             return new PageVO<>(userMapper.selectByCondition(userQuery));
-        }else{
+        } else {
             PageHelper.startPage(userQuery.getPageNum(), userQuery.getPageSize(), userQuery.getPageNum() != 0);
             return new PageVO<>(userMapper.selectSelf(userId));
         }
@@ -85,7 +83,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     @Override
     public void resetPassWord(String id) {
         // 查询出该用户
-        User user =userMapper.selectById(id);
+        User user = userMapper.selectById(id);
         // 截取手机后六位做加密
         String phone = user.getPhone();
         String passStr = phone.substring(phone.length() - 6, phone.length());
@@ -124,7 +122,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         // 复制属性
         BeanUtil.copyProperties(query, user);
         // 加密密码
-        user.setPassword( encoder.encode(user.getPassword()));
+        user.setPassword(encoder.encode(user.getPassword()));
         // 入库
         userMapper.insert(user);
     }
@@ -190,15 +188,16 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     }
 
     /**
-     *功能描述 :修改用户登录信息
-     * @author zht
-     * @date 2019/12/3
+     * 功能描述 :修改用户登录信息
+     *
      * @param userId
      * @param ip
      * @return void
+     * @author zht
+     * @date 2019/12/3
      */
     @Override
-    public void updateLoginInfo(String userId,String ip) {
+    public void updateLoginInfo(String userId, String ip) {
         User user = new User();
         user.setId(userId);
         user.setLastLoginIpAt(ip);
