@@ -29,8 +29,8 @@
 
         <dependency>
             <groupId>com.y3tu</groupId>
-            <artifactId>y3tu-tool-web</artifactId>
-            <version>${y3tu-tool-version}</version>
+            <artifactId>yao-tool-web</artifactId>
+            <version>${yao-tool-version}</version>
         </dependency>
 
         <!--api网关-->

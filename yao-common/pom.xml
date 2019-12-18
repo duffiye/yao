@@ -54,8 +54,15 @@
 
         <dependency>
             <groupId>com.y3tu</groupId>
-            <artifactId>y3tu-tool-web</artifactId>
-            <version>${y3tu-tool-version}</version>
+            <artifactId>yao-tool-web</artifactId>
+            <version>1.0</version>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.y3tu</groupId>
+            <artifactId>yao-tool-core</artifactId>
+            <version>1.0</version>
             <optional>true</optional>
         </dependency>
 

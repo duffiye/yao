@@ -14,3 +14,5 @@ yao-log/yao-log-starter/target/
 yao-ui/
 yao-batch/target/
 yao-feign/target/
+yao-tool/yao-tool-core/target/
+yao-tool/yao-tool-web/target/
