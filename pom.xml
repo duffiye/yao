@@ -14,10 +14,10 @@
         <module>yao-back</module>
         <module>yao-auth</module>
         <module>yao-gateway</module>
-        <module>yao-log</module>
         <module>yao-batch</module>
         <module>yao-feign</module>
         <module>yao-tool</module>
+        <module>yao-upms</module>
     </modules>
 
     <parent>

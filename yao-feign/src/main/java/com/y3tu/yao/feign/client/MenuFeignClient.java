@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * @author
  */
-@FeignClient(name = ServerNameConstants.BACK_SERVER)
+@FeignClient(name = ServerNameConstants.UPMS_SERVER)
 public interface MenuFeignClient {
     /**
      * 通过角色名查询资源信息

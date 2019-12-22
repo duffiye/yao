@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author zouht
  * @date 2019-05-09
  */
-@FeignClient(name = ServerNameConstants.AUTHENTICATION_SERVER)
+@FeignClient(name = ServerNameConstants.UPMS_SERVER)
 public interface AuthenticationFeignClient {
 
     /**

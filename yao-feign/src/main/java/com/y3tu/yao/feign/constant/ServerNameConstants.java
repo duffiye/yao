@@ -26,6 +26,7 @@ public interface ServerNameConstants {
      */
     String BACK_SERVER = "back-server";
 
+
     /**
      * 通用权限系统
      */

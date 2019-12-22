@@ -6,7 +6,8 @@ spring:
       config:
         server-addr: nacos.91xft.cn:80
         file-extension: yml
-        group: YAO_AUTH_GROUP
+        group: AUTH_GROUP
+        namespace: a4c99aa2-4d11-4c42-8791-9181a9dcec8a
   profiles:
     active: dev
   main:

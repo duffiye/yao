@@ -49,7 +49,6 @@ import static com.y3tu.yao.common.constants.DateConstant.PURE_DATETIME_MS_PATTER
  */
 @Component
 @Slf4j
-@Order(-5)
 public class AccessGatewayFilter implements GlobalFilter {
 
     @Autowired

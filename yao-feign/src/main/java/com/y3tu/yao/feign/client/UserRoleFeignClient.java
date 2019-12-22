@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  *
  * @author zht
  */
-@FeignClient(name = ServerNameConstants.BACK_SERVER, configuration = UserRoleFeignClient.UserRoleFeignConfig.class)
+@FeignClient(name = ServerNameConstants.UPMS_SERVER, configuration = UserRoleFeignClient.UserRoleFeignConfig.class)
 public interface UserRoleFeignClient {
 
     /**

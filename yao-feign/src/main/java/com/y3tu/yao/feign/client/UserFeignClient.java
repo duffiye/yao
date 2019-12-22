@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  *
  * @author zouht
  */
-@FeignClient(name = ServerNameConstants.BACK_SERVER)
+@FeignClient(name = ServerNameConstants.UPMS_SERVER)
 public interface UserFeignClient {
 
     /**

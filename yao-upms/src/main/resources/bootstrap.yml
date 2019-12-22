@@ -1,16 +1,15 @@
 spring:
   application:
-    name: authorization-server
+    name: upms-server
   cloud:
     nacos:
       config:
         server-addr: nacos.91xft.cn:80
         file-extension: yml
-        group: AUTH_GROUP
+        group: BACK_GROUP
         namespace: a4c99aa2-4d11-4c42-8791-9181a9dcec8a
   profiles:
     active: dev
   main:
     allow-bean-definition-overriding: true
-
 
