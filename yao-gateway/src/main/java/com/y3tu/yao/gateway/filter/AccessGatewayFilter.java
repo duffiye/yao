@@ -5,22 +5,25 @@ import com.y3tu.tool.core.util.StrUtil;
 import com.y3tu.yao.common.config.FilterIgnorePropertiesConfig;
 import com.y3tu.yao.common.util.TimeUtils;
 import com.y3tu.yao.feign.client.AuthenticationFeignClient;
+import com.y3tu.yao.feign.client.SecretKeyFeignClient;
 import com.y3tu.yao.feign.constant.ServerNameConstants;
+import com.y3tu.yao.gateway.constant.GatewayConstant;
 import com.y3tu.yao.gateway.exception.*;
 import com.y3tu.yao.gateway.utils.NonceUtil;
 import com.y3tu.yao.gateway.utils.SignUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.support.BodyInserterContext;
 import org.springframework.cloud.gateway.support.CachedBodyOutputMessage;
 import org.springframework.cloud.gateway.support.DefaultServerRequest;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
@@ -41,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 import static com.y3tu.yao.common.constants.CacheKeyConstants.GatewayCacheKey.NONCE_PREFIX;
 import static com.y3tu.yao.common.constants.CharsetConstant.UTF_8;
 import static com.y3tu.yao.common.constants.DateConstant.PURE_DATETIME_MS_PATTERN;
+import static com.y3tu.yao.gateway.constant.GatewayConstant.HeaderNames.*;
 
 /**
  * 网关权限过滤器
@@ -57,7 +61,20 @@ public class AccessGatewayFilter implements GlobalFilter {
     @Autowired
     FilterIgnorePropertiesConfig filterIgnorePropertiesConfig;
 
+    @Autowired
+    SecretKeyFeignClient secretKeyFeignClient;
+
     private final SimpleDateFormat sdf = new SimpleDateFormat(PURE_DATETIME_MS_PATTERN);
+
+    @Value("${spring.profiles.active}")
+    private String active;
+
+    @Value("${verify.time-limit}")
+    private long timeLimit;
+
+    @Value("${verify.cache-time}")
+    private long cacheTime;
+
 
     /**
      * 1.首先网关检查token是否有效，无效直接返回401，不调用签权服务
@@ -71,6 +88,7 @@ public class AccessGatewayFilter implements GlobalFilter {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         HttpMethod method = request.getMethod();
+
 
         if (Objects.isNull(method)) {
             throw new ErrorHTTPMethodException(SystemError.HTTP_METHOD_ERROR);
@@ -93,7 +111,7 @@ public class AccessGatewayFilter implements GlobalFilter {
         } catch (Exception e) {
             String msg = e.getMessage();
             //判断是不是token过期失效
-            if (msg.contains("401")) {
+            if (msg.contains(String.valueOf(HttpStatus.UNAUTHORIZED.value()))) {
                 throw new UnAuthorizedException(SystemError.UNAUTHORIZED);
             }
             String serverName = ServerNameConstants.AUTHENTICATION_SERVER;
@@ -102,61 +120,12 @@ public class AccessGatewayFilter implements GlobalFilter {
         }
 
         if (hasPermission) {
-            // 验证签名
-            ServerRequest serverRequest = new DefaultServerRequest(exchange);
-            String timestamp = request.getHeaders().getFirst("timestamp");
-            String nonce = request.getHeaders().getFirst("nonce");
-            String sign = request.getHeaders().getFirst("sign");
-            // read body and verify sign
-            //POST & PUT & PATCH 请求且为表单或者JSON传参取body验证签名.即排除文件上传的接口.
-            if (HttpMethod.POST.equals(method) || HttpMethod.PUT.equals(method) || HttpMethod.PATCH.equals(method)
-                    && (MediaType.APPLICATION_FORM_URLENCODED_VALUE.equalsIgnoreCase(contentType)
-                    || MediaType.APPLICATION_JSON_VALUE.equalsIgnoreCase(contentType))) {
-
-                Mono<String> modifiedBody = serverRequest.bodyToMono(String.class)
-                        .flatMap(body -> {
-                            // 签名验证
-                            apiAuth(timestamp, nonce, body, sign);
-                            return Mono.just(body);
-                        });
-                // 由于上面请求已经被消费,将请求信息重新塞回请求中
-                BodyInserter bodyInserter = BodyInserters.fromPublisher(modifiedBody, String.class);
-                HttpHeaders headers = new HttpHeaders();
-                headers.putAll(exchange.getRequest().getHeaders());
-                headers.remove(HttpHeaders.CONTENT_LENGTH);
-
-                CachedBodyOutputMessage outputMessage = new CachedBodyOutputMessage(exchange, headers);
-                return bodyInserter.insert(outputMessage, new BodyInserterContext())
-                        .then(Mono.defer(() -> {
-                            ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(
-                                    exchange.getRequest()) {
-
-                                public HttpHeaders getHeaders() {
-                                    long contentLength = headers.getContentLength();
-                                    HttpHeaders httpHeaders = new HttpHeaders();
-                                    httpHeaders.putAll(super.getHeaders());
-                                    if (contentLength > 0) {
-                                        httpHeaders.setContentLength(contentLength);
-                                    } else {
-                                        httpHeaders.set(HttpHeaders.TRANSFER_ENCODING, "chunked");
-                                    }
-                                    return httpHeaders;
-                                }
-
-                                public Flux<DataBuffer> getBody() {
-                                    return outputMessage.getBody();
-                                }
-                            };
-                            return chain.filter(exchange.mutate().request(decorator).build());
-                        }));
-            } else if (HttpMethod.GET.equals(method) || HttpMethod.DELETE.equals(method)) {
-                // 验证如GET ,DELETE 在链接中传参的请求
-                String path = request.getURI().getPath();
-                String query = request.getURI().getQuery();
-                apiAuth(timestamp, nonce, path + "?" + query, sign);
+            // 头部传required_sign字段,以此来判断是否要验签.主要是开发和测试环境
+            if (Objects.equals(active, GatewayConstant.Active.PROD)) {
                 return chain.filter(exchange);
             }
-            return chain.filter(exchange);
+            return sign(exchange, chain, request, method, contentType);
+
             //如果每个微服务需要做验证，则转发的请求都加上服务间认证token
             //如果只在网关做验证则不需要
         } else {
@@ -164,17 +133,113 @@ public class AccessGatewayFilter implements GlobalFilter {
         }
     }
 
+    /**
+     * 功能描述 :签名验证
+     *
+     * @param exchange, chain, request, method, contentType
+     * @return reactor.core.publisher.Mono<java.lang.Void>
+     * @author zht
+     * @date 2019/12/23
+     */
+    private Mono<Void> sign(ServerWebExchange exchange, GatewayFilterChain chain, ServerHttpRequest request, HttpMethod method, String contentType) {
+        // 验证签名
+        ServerRequest serverRequest = new DefaultServerRequest(exchange);
+        String timestamp = request.getHeaders().getFirst(TIMESTAMP);
+        String nonce = request.getHeaders().getFirst(NONCE);
+        String sign = request.getHeaders().getFirst(SIGN);
+        String serverName = request.getHeaders().getFirst(SERVER_NAME);
+        System.out.println(serverName);
+        // 去 common服务获取秘钥
+        String secretKey = secretKeyFeignClient.getSecretKey(serverName);
+        System.out.println(secretKey);
+        // read body and verify sign
+        //POST & PUT & PATCH 请求且为表单或者JSON传参取body验证签名.即排除文件上传的接口.
+        boolean isPost = HttpMethod.POST.equals(method) || HttpMethod.PUT.equals(method) || (HttpMethod.PATCH.equals(method)
+                && (MediaType.APPLICATION_FORM_URLENCODED_VALUE.equalsIgnoreCase(contentType)|| MediaType.APPLICATION_JSON_VALUE.equalsIgnoreCase(contentType)));
+        if (isPost) {
+            return signPost(exchange, chain, serverRequest, timestamp, nonce, sign, secretKey);
+        } else if (HttpMethod.GET.equals(method) || HttpMethod.DELETE.equals(method)) {
+            return signGet(exchange, chain, request, timestamp, nonce, sign, secretKey);
+        }
+        return chain.filter(exchange);
+    }
 
-    private boolean ignoreAuthentication(String url) {
-        return filterIgnorePropertiesConfig.getUrls().stream().anyMatch(ignoreUrl -> url.startsWith(StrUtil.trim(ignoreUrl)));
+    /**
+     * 功能描述 :get类请求验签
+     *
+     * @param exchange, chain, request, timestamp, nonce, sign
+     * @return reactor.core.publisher.Mono<java.lang.Void>
+     * @author zht
+     * @date 2019/12/23
+     */
+    private Mono<Void> signGet(ServerWebExchange exchange, GatewayFilterChain chain, ServerHttpRequest request,
+                               String timestamp, String nonce, String sign, String secretKey) {
+        // 验证如GET ,DELETE 在链接中传参的请求
+        String path = request.getURI().getPath();
+        String query = request.getURI().getQuery();
+        verifySign(timestamp, nonce, path + "?" + query, sign, secretKey);
+        return chain.filter(exchange);
+    }
+
+    /**
+     * 功能描述 :post类请求验签
+     *
+     * @param exchange, chain, serverRequest, timestamp, nonce, sign
+     * @return reactor.core.publisher.Mono<java.lang.Void>
+     * @author zht
+     * @date 2019/12/23
+     */
+    private Mono<Void> signPost(ServerWebExchange exchange, GatewayFilterChain chain, ServerRequest serverRequest,
+                                String timestamp, String nonce, String sign, String secretKey) {
+        Mono<String> modifiedBody = serverRequest.bodyToMono(String.class)
+                .flatMap(body -> {
+                    // 签名验证
+                    verifySign(timestamp, nonce, body, sign, secretKey);
+                    return Mono.just(body);
+                });
+        // 由于上面请求已经被消费,将请求信息重新塞回请求中
+        BodyInserter<Mono<String>, org.springframework.http.ReactiveHttpOutputMessage> bodyInserter = BodyInserters.fromPublisher(modifiedBody, String.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.putAll(exchange.getRequest().getHeaders());
+        headers.remove(HttpHeaders.CONTENT_LENGTH);
+
+        CachedBodyOutputMessage outputMessage = new CachedBodyOutputMessage(exchange, headers);
+        return bodyInserter.insert(outputMessage, new BodyInserterContext())
+                .then(Mono.defer(() -> {
+                    ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(
+                            exchange.getRequest()) {
+                        @Override
+                        public HttpHeaders getHeaders() {
+                            long contentLength = headers.getContentLength();
+                            HttpHeaders httpHeaders = new HttpHeaders();
+                            httpHeaders.putAll(super.getHeaders());
+                            if (contentLength > 0) {
+                                httpHeaders.setContentLength(contentLength);
+                            } else {
+                                httpHeaders.set(HttpHeaders.TRANSFER_ENCODING, "chunked");
+                            }
+                            return httpHeaders;
+                        }
+
+                        @Override
+                        public Flux<DataBuffer> getBody() {
+                            return outputMessage.getBody();
+                        }
+                    };
+                    return chain.filter(exchange.mutate().request(decorator).build());
+                }));
     }
 
 
-    private void apiAuth(String timestamp, String nonce, String bodyString, String sign) {
-
-        //时间限制配置
-        long timeLimit = 3 * 60 * 1000L;
-        long cacheTime = 1000;
+    /**
+     * 功能描述 :签名验证
+     *
+     * @param timestamp, nonce, bodyString, sign
+     * @return void
+     * @author zht
+     * @date 2019/12/23
+     */
+    private void verifySign(String timestamp, String nonce, String bodyString, String sign, String secretKey) {
 
         //请求头参数非空验证
         if (StringUtils.isEmpty(timestamp) || StringUtils.isEmpty(nonce) || StringUtils.isEmpty(sign)) {
@@ -201,11 +266,24 @@ public class AccessGatewayFilter implements GlobalFilter {
         }
 
         //服务器生成签名与header中签名对比
-        String serverSign = SignUtil.createSign(UTF_8, timestamp, nonce, bodyString);
+        String serverSign = SignUtil.createSign(UTF_8, timestamp, nonce, bodyString, secretKey);
         System.out.println(serverSign);
         if (!serverSign.equals(sign)) {
             throw new ErrorSignException(SystemError.SIGN_ERROR);
         }
+    }
+
+
+    /**
+     * 功能描述 :忽略请求
+     *
+     * @param url
+     * @return boolean
+     * @author zht
+     * @date 2019/12/23
+     */
+    private boolean ignoreAuthentication(String url) {
+        return filterIgnorePropertiesConfig.getUrls().stream().anyMatch(ignoreUrl -> url.startsWith(StrUtil.trim(ignoreUrl)));
     }
 
 }

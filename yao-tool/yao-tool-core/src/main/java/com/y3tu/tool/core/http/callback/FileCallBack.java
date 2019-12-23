@@ -17,7 +17,7 @@ import java.io.InputStream;
  *
  * @author y3tu
  */
-public class FileCallBack extends CallBack<File> {
+public class FileCallBack extends AbstractCallBack<File> {
     /**
      * 目标文件夹地址
      */
@@ -93,11 +93,15 @@ public class FileCallBack extends CallBack<File> {
         } finally {
             try {
                 response.body().close();
-                if (is != null) is.close();
+                if (is != null) {
+                    is.close();
+                }
             } catch (IOException e) {
             }
             try {
-                if (fos != null) fos.close();
+                if (fos != null) {
+                    fos.close();
+                }
             } catch (IOException e) {
             }
 

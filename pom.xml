@@ -11,7 +11,6 @@
     <description>Yao 快速开发脚手架</description>
     <modules>
         <module>yao-common</module>
-        <module>yao-back</module>
         <module>yao-auth</module>
         <module>yao-gateway</module>
         <module>yao-batch</module>

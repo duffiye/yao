@@ -6,9 +6,11 @@ import okhttp3.Response;
 import java.io.IOException;
 
 /**
- * 异步请求的回调函数
+ *功能描述 :异步请求的回调函数
+ * @author zht
+ * @date 2019/12/23
  */
-public abstract class CallBack<T> {
+public abstract class AbstractCallBack<T> {
     /**
      * 请求失败的时候调用
      *

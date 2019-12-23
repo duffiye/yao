@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.y3tu.yao.upms.mapper.MenuMapper">
+
+    <resultMap id="MenuVoMap" type="com.y3tu.yao.feign.vo.MenuVO">
+        <id column="id" property="id"/>
+        <result column="system_id" property="systemId"/>
+        <result column="icon" property="icon"/>
+        <result column="state" property="state"/>
+        <result column="types" property="types"/>
+        <result column="ranks" property="ranks"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="name" property="name"/>
+        <result column="remark" property="remark"/>
+        <result column="url" property="url"/>
+        <result column="code" property="code"/>
+    </resultMap>
+
+    <resultMap id="MenuQueryVoMap" type="com.y3tu.yao.upms.model.vo.MenuQueryVO">
+        <id column="id" property="id"/>
+        <result column="system_id" property="systemId"/>
+        <result column="icon" property="icon"/>
+        <result column="state" property="state"/>
+        <result column="types" property="types"/>
+        <result column="ranks" property="ranks"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="name" property="name"/>
+        <result column="remark" property="remark"/>
+        <result column="url" property="url"/>
+        <result column="code" property="code"/>
+    </resultMap>
+
+    <select id="findMenuByRoleId" resultMap="MenuVoMap">
+        SELECT
+            sm.id,
+            sm.system_id,
+            sm.parent_id,
+            sm.name,
+            sm.remark,
+            sm.url,
+            sm.code,
+            sm.state,
+            sm.types,
+            sm.ranks,
+            sm.icon
+        FROM
+          sys_menu sm
+        LEFT JOIN
+          sys_role_menu srm on sm.id = srm.menu_id
+        WHERE
+          srm.role_id = #{roleId}
+    </select>
+
+    <select id="findMenuByRoleCode" resultType="com.y3tu.yao.feign.vo.MenuVO">
+        SELECT
+            sm.id,
+            sm.system_id,
+            sm.parent_id,
+            sm.name,
+            sm.remark,
+            sm.url,
+            sm.code,
+            sm.state,
+            sm.types,
+            sm.ranks,
+            sm.icon
+        FROM
+          sys_menu sm
+        LEFT JOIN
+          sys_role_menu srm on sm.id = srm.menu_id
+        LEFT JOIN
+          sys_role sr on sr.id = srm.role_id
+        WHERE
+          sm.state = 1
+        AND
+          sr.code = #{code}
+    </select>
+
+    <select id="selectAll" resultType="com.y3tu.yao.feign.vo.MenuVO">
+        SELECT
+            sm.id,
+            sm.system_id,
+            sm.parent_id,
+            sm.name,
+            sm.remark,
+            sm.url,
+            sm.code,
+            sm.state,
+            sm.types,
+            sm.ranks,
+            sm.icon
+        FROM
+            sys_menu sm
+        where
+            state = 1
+    </select>
+
+    <select id="selectByConditions" resultMap="MenuQueryVoMap">
+      SELECT
+        id,
+        system_id,
+        parent_id,
+        `name`,
+        remark,
+        url,
+        `code`,
+        state,
+        types,
+        ranks,
+        icon
+      FROM
+        sys_menu
+      where
+        1=1
+        <if test="menuName != null and menuName !=''">
+            AND `name`= #{menuName}
+        </if>
+      ORDER BY created_at ,parent_id
+    </select>
+
+</mapper>

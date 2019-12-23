@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.y3tu.yao.common.constants.DateConstant.NORM_DATE_PATTERN;
 import static com.y3tu.yao.common.constants.DateConstant.PURE_DATETIME_MS_PATTERN;
 
 /**
@@ -130,7 +131,7 @@ public class TimeUtils {
             return format.format(date);
         } catch (Exception e) {
             e.printStackTrace();
-            SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
+            SimpleDateFormat format = new SimpleDateFormat(NORM_DATE_PATTERN);
             return format.format(new Date());
         }
     }

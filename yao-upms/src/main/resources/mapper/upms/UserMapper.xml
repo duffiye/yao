@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.y3tu.yao.upms.mapper.UserMapper">
+
+    <resultMap id="baseResultMap" type="com.y3tu.yao.upms.model.entity.User">
+        <id column="id" property="id"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted_at" property="deletedAt"/>
+        <result column="uid" property="uid"/>
+        <result column="phone" property="phone"/>
+        <result column="full_name" property="fullName"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="last_login_at" property="lastLoginAt"/>
+        <result column="last_login_ip_at" property="lastLoginIpAt"/>
+        <result column="retry_times" property="retryTimes"/>
+        <result column="state" property="state"/>
+    </resultMap>
+    <!-- userVo结果集 -->
+    <resultMap id="userVoResultMap" type="com.y3tu.yao.feign.vo.UserVO">
+        <result column="uid" property="uid"/>
+        <result column="username" property="username"/>
+        <result column="full_name" property="fullName"/>
+        <result column="role_name" property="roleName"/>
+        <result column="phone" property="phone"/>
+        <result column="last_login_at" property="lastLoginAt"/>
+        <result column="last_login_ip_at" property="lastLoginIpAt"/>
+        <result column="create_at" property="createdAt"/>
+        <result column="state" property="state"/>
+    </resultMap>
+
+    <resultMap id="userQueryVoMap" type="com.y3tu.yao.upms.model.vo.UserQueryVO">
+        <id column="id" property="id"/>
+        <result column="uid" property="uid"/>
+        <result column="username" property="username"/>
+        <result column="full_name" property="fullName"/>
+        <result column="role_name" property="roleName"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="phone" property="phone"/>
+        <result column="last_login_at" property="lastLoginAt"/>
+        <result column="last_login_ip_at" property="lastLoginIpAt"/>
+        <result column="state" property="state"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,
+        uid,
+        phone,
+        password,
+        last_login_at,
+        last_login_ip_at,
+        retry_times,
+        state
+    </sql>
+
+    <sql id="selectUserVo">
+        SELECT
+          su.id,
+          su.uid,
+          su.phone,
+          su.username,
+          su.full_name,
+          su.password,
+          su.last_login_at,
+          su.last_login_ip_at,
+          su.created_at,
+          su.state,
+          sr.`name` as role_name,
+          sr.`code` as role_code
+        FROM sys_user su
+        LEFT JOIN sys_user_role sur on su.id=sur.user_id
+        LEFT JOIN sys_role sr on sr.id = sur.role_id
+    </sql>
+
+    <select id="page" resultType="com.y3tu.yao.upms.model.entity.User" parameterType="java.util.Map">
+        select t_user.id, t_user.create_by AS createBy, t_user.create_time AS createTime, t_user.update_by AS updateBy,
+        t_user.update_time AS updateTime, t_user.address,
+        t_user.avatar, t_user.description, t_user.email, t_user.mobile, t_user.nick_name AS nickName,
+        t_user.sex, t_user.status, t_user.username, t_user.del_flag AS delFlag,
+        t_user.department_id as departmentId,t_department.name as departmentName
+        from t_user left join t_department on t_user.department_id = t_department.id
+        where 1=1
+        <if test="params.username!=null and params.username !=''">
+            and t_user.username like '%${params.username}%'
+        </if>
+
+        <if test="params.departmentId!=null and params.departmentId !=''">
+            and t_user.department_id = #{params.departmentId}
+        </if>
+
+        <if test="params.status!=null and params.status !=''">
+            and t_user.status = #{params.status}
+        </if>
+
+        <if test="params.mobile!=null and params.mobile !=''">
+            and t_user.mobile = #{params.mobile}
+        </if>
+
+        <if test="params.email!=null and params.email !=''">
+            and t_user.email = #{params.email}
+        </if>
+
+        <if test="params.createTime!=null and params.createTime !=''">
+            and t_user.create_time >= #{params.createTime}
+        </if>
+
+    </select>
+
+    <select id="selectAll" resultType="com.y3tu.yao.upms.model.entity.User">
+        select
+        <include refid="Base_Column_List"/>
+        from t_user
+    </select>
+
+    <select id="selectUserVoById" resultMap="userVoResultMap">
+        <include refid="selectUserVo"/>
+        WHERE su.id = #{userId}
+    </select>
+
+    <select id="selectUserVoByUsername" resultMap="userVoResultMap">
+        <include refid="selectUserVo"/>
+        WHERE su.username = #{username}
+    </select>
+
+    <select id="selectUserVoByMobile" resultMap="userVoResultMap">
+        <include refid="selectUserVo"/>
+        WHERE su.mobile = #{mobile}
+    </select>
+
+    <select id="selectUserVoByOpenId" resultMap="userVoResultMap">
+        <include refid="selectUserVo"/>
+        WHERE `user`.salt = #{openId}
+    </select>
+
+    <select id="selectByCondition" resultMap="userQueryVoMap"
+            parameterType="com.y3tu.yao.upms.model.query.user.UserQuery">
+        SELECT
+        su.id,
+        su.uid,
+        su.phone,
+        su.username,
+        su.password,
+        su.created_at,
+        su.full_name,
+        su.last_login_at,
+        su.last_login_ip_at,
+        su.retry_times,
+        su.state,
+        sr.`name` as role_name
+        FROM
+        sys_user su
+        LEFT JOIN
+        sys_user_role sur ON su.id = sur.user_id
+        LEFT JOIN
+        sys_role sr ON sr.id = sur.role_id
+        WHERE 1=1
+        <if test="username != null and username != ''">
+            and username like "%"#{username}"%"
+        </if>
+        <if test="fullName != null and fullName != ''">
+            and full_name like "%"#{fullName}"%"
+        </if>
+        <if test="phone != null and phone !=''">
+            and phone = #{phone}
+        </if>
+        ORDER BY created_at desc
+    </select>
+
+    <select id="selectUserByUid" resultMap="baseResultMap">
+        <include refid="selectUserVo"/>
+        WHERE su.uid = #{uid}
+    </select>
+
+    <select id="selectSelf" resultType="com.y3tu.yao.upms.model.vo.UserQueryVO">
+        SELECT
+        su.id,
+        su.uid,
+        su.phone,
+        su.username,
+        su.password,
+        su.created_at,
+        su.full_name,
+        su.last_login_at,
+        su.last_login_ip_at,
+        su.retry_times,
+        su.state,
+        sr.`name` as role_name
+        FROM
+        sys_user su
+        LEFT JOIN
+        sys_user_role sur ON su.id = sur.user_id
+        LEFT JOIN
+        sys_role sr ON sr.id = sur.role_id
+        WHERE su.id = #{userId}
+    </select>
+
+
+    <select id="selectByUserID" resultType="com.y3tu.yao.upms.model.entity.User">
+        <include refid="selectUserVo"/>
+        WHERE su.id = #{id}
+    </select>
+
+</mapper>

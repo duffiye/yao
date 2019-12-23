@@ -1,14 +1,28 @@
 package com.y3tu.yao.common.enums;
 
 /**
- * 资源类型枚举
+ * 功能描述 :资源类型枚举
+ *
+ * @param
+ * @author zht
+ * @date 2019/12/23
+ * @return
  */
 public enum ResourceTypeEnum {
 
+    /**
+     * 顶层菜单
+     */
     TOP_MENU(-1, "顶层菜单"),
 
+    /**
+     * 普通菜单
+     */
     MENU(0, "普通菜单"),
 
+    /**
+     * 按钮
+     */
     BUTTON(1, "按钮");
 
 

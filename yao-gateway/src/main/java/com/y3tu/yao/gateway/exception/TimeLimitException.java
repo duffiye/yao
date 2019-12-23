@@ -5,7 +5,9 @@ import com.y3tu.tool.core.exception.IError;
 import com.y3tu.tool.core.exception.SystemException;
 
 /**
- * 请求时间在限值之内
+ *功能描述 :请求时间在限值之内
+ * @author zht
+ * @date 2019/12/23
  */
 public class TimeLimitException extends SystemException {
     public TimeLimitException() {

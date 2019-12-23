@@ -2,7 +2,7 @@ package com.y3tu.tool.core.http;
 
 import com.y3tu.tool.core.collection.CollectionUtil;
 import com.y3tu.tool.core.collection.IterUtil;
-import com.y3tu.tool.core.http.callback.CallBack;
+import com.y3tu.tool.core.http.callback.AbstractCallBack;
 import com.y3tu.tool.core.http.pojo.Resp;
 import com.y3tu.tool.core.map.MapUtil;
 import com.y3tu.tool.core.util.CharsetUtil;
@@ -38,10 +38,10 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      * get请求 (异步)
      *
      * @param url      请求url
-     * @param callBack 回调接口 onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
+     * @param abstractCallBack 回调接口 onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
      */
-    public static void get(String url, CallBack callBack) {
-        get(url, null, callBack);
+    public static void get(String url, AbstractCallBack abstractCallBack) {
+        get(url, null, abstractCallBack);
     }
 
     /**
@@ -49,10 +49,10 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      *
      * @param url：url
      * @param paramsMap：map集合，封装键值对参数
-     * @param callBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
+     * @param abstractCallBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
      */
-    public static void get(String url, Map<String, String> paramsMap, CallBack callBack) {
-        http(METHOD_GET, url, paramsMap, null, callBack);
+    public static void get(String url, Map<String, String> paramsMap, AbstractCallBack abstractCallBack) {
+        http(METHOD_GET, url, paramsMap, null, abstractCallBack);
     }
 
 
@@ -79,10 +79,10 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      * post请求 (异步)
      *
      * @param url      请求url
-     * @param callBack 回调接口 onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
+     * @param abstractCallBack 回调接口 onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
      */
-    public static void post(String url, CallBack callBack) {
-        post(url, null, callBack);
+    public static void post(String url, AbstractCallBack abstractCallBack) {
+        post(url, null, abstractCallBack);
     }
 
     /**
@@ -90,10 +90,10 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      *
      * @param url：url
      * @param paramsMap：map集合，封装键值对参数
-     * @param callBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
+     * @param abstractCallBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
      */
-    public static void post(String url, Map<String, String> paramsMap, CallBack callBack) {
-        http(METHOD_POST, url, paramsMap, null, callBack);
+    public static void post(String url, Map<String, String> paramsMap, AbstractCallBack abstractCallBack) {
+        http(METHOD_POST, url, paramsMap, null, abstractCallBack);
     }
 
 
@@ -141,10 +141,10 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      * @param url：url
      * @param paramsMap：map集合，封装键值对参数
      * @param headerMap：map集合，封装请求头键值对
-     * @param callBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
+     * @param abstractCallBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
      */
-    public static void http(String methodType, String url, Map<String, String> paramsMap, Map<String, String> headerMap, CallBack callBack) {
-        new OkHttpUtil(methodType, url, paramsMap, headerMap, callBack).execute();
+    public static void http(String methodType, String url, Map<String, String> paramsMap, Map<String, String> headerMap, AbstractCallBack abstractCallBack) {
+        new OkHttpUtil(methodType, url, paramsMap, headerMap, abstractCallBack).execute();
     }
 
 
@@ -153,10 +153,10 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      *
      * @param url：url
      * @param jsonStr：json格式的键值对参数
-     * @param callBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
+     * @param abstractCallBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
      */
-    public static void postJson(String url, String jsonStr, CallBack callBack) {
-        postJson(url, jsonStr, null, callBack);
+    public static void postJson(String url, String jsonStr, AbstractCallBack abstractCallBack) {
+        postJson(url, jsonStr, null, abstractCallBack);
     }
 
     /**
@@ -165,10 +165,10 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      * @param url：url
      * @param jsonStr：json格式的键值对参数
      * @param headerMap：map集合，封装请求头键值对
-     * @param callBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
+     * @param abstractCallBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
      */
-    public static void postJson(String url, String jsonStr, Map<String, String> headerMap, CallBack callBack) {
-        new OkHttpUtil(METHOD_POST, url, jsonStr, headerMap, callBack).execute();
+    public static void postJson(String url, String jsonStr, Map<String, String> headerMap, AbstractCallBack abstractCallBack) {
+        new OkHttpUtil(METHOD_POST, url, jsonStr, headerMap, abstractCallBack).execute();
     }
 
 
@@ -201,10 +201,10 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      * @param file：File对象
      * @param fileKey：上传参数时file对应的键
      * @param fileType：File类型，是image，video，audio，file
-     * @param callBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用，还可以重写onProgress方法，得到上传进度
+     * @param abstractCallBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用，还可以重写onProgress方法，得到上传进度
      */
-    public static void uploadFile(String url, File file, String fileKey, String fileType, CallBack callBack) {
-        uploadFile(url, file, fileKey, fileType, null, callBack);
+    public static void uploadFile(String url, File file, String fileKey, String fileType, AbstractCallBack abstractCallBack) {
+        uploadFile(url, file, fileKey, fileType, null, abstractCallBack);
     }
 
     /**
@@ -215,10 +215,10 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      * @param fileKey：上传参数时file对应的键
      * @param fileType：File类型，是image，video，audio，file
      * @param paramsMap：map集合，封装键值对参数
-     * @param callBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用，还可以重写onProgress方法，得到上传进度
+     * @param abstractCallBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用，还可以重写onProgress方法，得到上传进度
      */
-    public static void uploadFile(String url, File file, String fileKey, String fileType, Map<String, String> paramsMap, CallBack callBack) {
-        uploadFile(url, file, fileKey, fileType, paramsMap, null, callBack);
+    public static void uploadFile(String url, File file, String fileKey, String fileType, Map<String, String> paramsMap, AbstractCallBack abstractCallBack) {
+        uploadFile(url, file, fileKey, fileType, paramsMap, null, abstractCallBack);
     }
 
     /**
@@ -230,10 +230,10 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      * @param fileType：File类型，是image，video，audio，file
      * @param paramsMap：map集合，封装键值对参数
      * @param headerMap：map集合，封装请求头键值对
-     * @param callBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用，还可以重写onProgress方法，得到上传进度
+     * @param abstractCallBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用，还可以重写onProgress方法，得到上传进度
      */
-    public static void uploadFile(String url, File file, String fileKey, String fileType, Map<String, String> paramsMap, Map<String, String> headerMap, CallBack callBack) {
-        new OkHttpUtil(METHOD_POST, url, paramsMap, file, fileKey, fileType, headerMap, callBack).execute();
+    public static void uploadFile(String url, File file, String fileKey, String fileType, Map<String, String> paramsMap, Map<String, String> headerMap, AbstractCallBack abstractCallBack) {
+        new OkHttpUtil(METHOD_POST, url, paramsMap, file, fileKey, fileType, headerMap, abstractCallBack).execute();
     }
 
     /**
@@ -243,10 +243,10 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      * @param fileList：集合元素是File对象
      * @param fileKey：上传参数时fileList对应的键
      * @param fileType：File类型，是image，video，audio，file
-     * @param callBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
+     * @param abstractCallBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
      */
-    public static void uploadListFile(String url, List<File> fileList, String fileKey, String fileType, CallBack callBack) {
-        uploadListFile(url, null, fileList, fileKey, fileType, callBack);
+    public static void uploadListFile(String url, List<File> fileList, String fileKey, String fileType, AbstractCallBack abstractCallBack) {
+        uploadListFile(url, null, fileList, fileKey, fileType, abstractCallBack);
     }
 
     /**
@@ -257,10 +257,10 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      * @param fileKey：上传参数时fileList对应的键
      * @param fileType：File类型，是image，video，audio，file
      * @param paramsMap：map集合，封装键值对参数
-     * @param callBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
+     * @param abstractCallBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
      */
-    public static void uploadListFile(String url, Map<String, String> paramsMap, List<File> fileList, String fileKey, String fileType, CallBack callBack) {
-        uploadListFile(url, paramsMap, fileList, fileKey, fileType, null, callBack);
+    public static void uploadListFile(String url, Map<String, String> paramsMap, List<File> fileList, String fileKey, String fileType, AbstractCallBack abstractCallBack) {
+        uploadListFile(url, paramsMap, fileList, fileKey, fileType, null, abstractCallBack);
     }
 
     /**
@@ -272,10 +272,10 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      * @param fileType：File类型，是image，video，audio，file
      * @param paramsMap：map集合，封装键值对参数
      * @param headerMap：map集合，封装请求头键值对
-     * @param callBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
+     * @param abstractCallBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
      */
-    public static void uploadListFile(String url, Map<String, String> paramsMap, List<File> fileList, String fileKey, String fileType, Map<String, String> headerMap, CallBack callBack) {
-        new OkHttpUtil(METHOD_POST, url, paramsMap, fileList, fileKey, fileType, headerMap, callBack).execute();
+    public static void uploadListFile(String url, Map<String, String> paramsMap, List<File> fileList, String fileKey, String fileType, Map<String, String> headerMap, AbstractCallBack abstractCallBack) {
+        new OkHttpUtil(METHOD_POST, url, paramsMap, fileList, fileKey, fileType, headerMap, abstractCallBack).execute();
     }
 
     /**
@@ -284,10 +284,10 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      * @param url：url
      * @param fileMap：集合key是File对象对应的键，集合value是File对象
      * @param fileType：File类型，是image，video，audio，file
-     * @param callBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
+     * @param abstractCallBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
      */
-    public static void uploadMapFile(String url, Map<String, File> fileMap, String fileType, CallBack callBack) {
-        uploadMapFile(url, fileMap, fileType, null, callBack);
+    public static void uploadMapFile(String url, Map<String, File> fileMap, String fileType, AbstractCallBack abstractCallBack) {
+        uploadMapFile(url, fileMap, fileType, null, abstractCallBack);
     }
 
     /**
@@ -297,10 +297,10 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      * @param fileMap：集合key是File对象对应的键，集合value是File对象
      * @param fileType：File类型，是image，video，audio，file
      * @param paramsMap：map集合，封装键值对参数
-     * @param callBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
+     * @param abstractCallBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
      */
-    public static void uploadMapFile(String url, Map<String, File> fileMap, String fileType, Map<String, String> paramsMap, CallBack callBack) {
-        uploadMapFile(url, fileMap, fileType, paramsMap, null, callBack);
+    public static void uploadMapFile(String url, Map<String, File> fileMap, String fileType, Map<String, String> paramsMap, AbstractCallBack abstractCallBack) {
+        uploadMapFile(url, fileMap, fileType, paramsMap, null, abstractCallBack);
     }
 
     /**
@@ -311,38 +311,38 @@ public class HttpUtil extends cn.hutool.http.HttpUtil {
      * @param fileType：File类型，是image，video，audio，file
      * @param paramsMap：map集合，封装键值对参数
      * @param headerMap：map集合，封装请求头键值对
-     * @param callBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
+     * @param abstractCallBack：回调接口，onFailure方法在请求失败时调用，onResponse方法在请求成功后调用
      */
-    public static void uploadMapFile(String url, Map<String, File> fileMap, String fileType, Map<String, String> paramsMap, Map<String, String> headerMap, CallBack callBack) {
-        new OkHttpUtil(METHOD_POST, url, paramsMap, fileMap, fileType, headerMap, callBack).execute();
+    public static void uploadMapFile(String url, Map<String, File> fileMap, String fileType, Map<String, String> paramsMap, Map<String, String> headerMap, AbstractCallBack abstractCallBack) {
+        new OkHttpUtil(METHOD_POST, url, paramsMap, fileMap, fileType, headerMap, abstractCallBack).execute();
     }
 
     /**
      * 下载文件,不带参数
      */
-    public static void downloadFile(String url, CallBack callBack) {
-        downloadFile(url, null, callBack);
+    public static void downloadFile(String url, AbstractCallBack abstractCallBack) {
+        downloadFile(url, null, abstractCallBack);
     }
 
     /**
      * 下载文件,带参数
      */
-    public static void downloadFile(String url, Map<String, String> paramsMap, CallBack callBack) {
-        get(url, paramsMap, callBack);
+    public static void downloadFile(String url, Map<String, String> paramsMap, AbstractCallBack abstractCallBack) {
+        get(url, paramsMap, abstractCallBack);
     }
 
     /**
      * 加载图片
      */
-    public static void getBitmap(String url, CallBack callBack) {
-        getBitmap(url, null, callBack);
+    public static void getBitmap(String url, AbstractCallBack abstractCallBack) {
+        getBitmap(url, null, abstractCallBack);
     }
 
     /**
      * 加载图片，带参数
      */
-    public static void getBitmap(String url, Map<String, String> paramsMap, CallBack callBack) {
-        get(url, paramsMap, callBack);
+    public static void getBitmap(String url, Map<String, String> paramsMap, AbstractCallBack abstractCallBack) {
+        get(url, paramsMap, abstractCallBack);
     }
 
     /**

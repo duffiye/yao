@@ -62,8 +62,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
-                .authenticationProvider(mobileAuthenticationProvider())  // list 可以添加多个认证provider
-                .userDetailsService(userDetailsService)   // spring security 自动配置, 自动注入一股userDetailService# com.y3tu.yao.authorization.security.UserDetailsServiceImpl
+                // list 可以添加多个认证provider
+                .authenticationProvider(mobileAuthenticationProvider())
+                // spring security 自动配置, 自动注入一股userDetailService# com.y3tu.yao.authorization.security.UserDetailsServiceImpl
+                .userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder());
     }
 

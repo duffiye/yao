@@ -31,7 +31,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         RoleVO roleVo;
         try {
             userVO = userFeignClient.loadUserByUsername(username);
-            roleVo = userRoleFeignClient.findByUserId(userVO.getId().toString());
+            roleVo = userRoleFeignClient.findByUserId(userVO.getId());
         } catch (Exception e) {
             throw new ServerCallException("服务[" + ServerNameConstants.BACK_SERVER + "]调用异常！", e);
         }

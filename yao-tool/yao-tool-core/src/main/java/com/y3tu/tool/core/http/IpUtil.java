@@ -34,6 +34,8 @@ public class IpUtil {
 
     public static String ipFileTempPath = SystemUtil.get(SystemUtil.TMPDIR) + "ip2region.db";
 
+    public static final Pattern PATTERN = Pattern.compile("\\<dd class\\=\"fz24\">(.*?)\\<\\/dd>");
+
     static {
         try {
             //第一次加载时清除ip2region.db文件
@@ -79,7 +81,7 @@ public class IpUtil {
         }
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
-            if (ip.equals("127.0.0.1")) {
+            if ("127.0.0.1".equals(ip)) {
                 //根据网卡取本机配置的IP
                 InetAddress inet = null;
                 try {
@@ -233,8 +235,8 @@ public class IpUtil {
             }
         }
 
-        final Pattern p = Pattern.compile("\\<dd class\\=\"fz24\">(.*?)\\<\\/dd>");
-        Matcher m = p.matcher(inputLine.toString());
+
+        Matcher m = PATTERN.matcher(inputLine.toString());
         if (m.find()) {
             String ipstr = m.group(1);
             ip = ipstr;

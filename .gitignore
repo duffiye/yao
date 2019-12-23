@@ -9,16 +9,4 @@ yao-batch/target/
 yao-feign/target/
 yao-tool/yao-tool-core/target/
 yao-tool/yao-tool-web/target/
-yao-feign/src/main/java/com/y3tu/yao/feign/model/
-yao-tool/yao-tool-core/src/test/
-yao-tool/yao-tool-web/src/test/
-yao-upms/pom.xml
-yao-upms/src/main/java/com/y3tu/yao/upms/constant/
-yao-upms/src/main/java/com/y3tu/yao/upms/controller/
-yao-upms/src/main/java/com/y3tu/yao/upms/emums/
-yao-upms/src/main/java/com/y3tu/yao/upms/mapper/
-yao-upms/src/main/java/com/y3tu/yao/upms/model/
-yao-upms/src/main/java/com/y3tu/yao/upms/service/
-yao-upms/src/main/java/com/y3tu/yao/upms/utils/
-yao-upms/src/main/resources/mapper/
 yao-upms/target/

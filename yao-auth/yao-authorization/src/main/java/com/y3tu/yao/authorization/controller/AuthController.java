@@ -84,8 +84,6 @@ public class AuthController {
         smsMessageTemplate.setTemplate(SmsTemplateEnum.LOGIN_CODE.getTempalte());
         smsMessageTemplate.setChannel(SmsMessageChannnelEnum.TENCENT_CLOUD.getCode());
 
-        // 发送消息处理中心，存储在消息队列，供真正的短信程序获取队列数据并发送短信
-//        rabbitTemplate.convertAndSend(MqQueueNameConstant.MOBILE_CODE_QUEUE,smsMessageTemplate);
         // 存redis
         redisTemplate.opsForValue().set(AuthConstants.REDIS_MOBILE_CODE_PREFIX + mobile, code, AuthConstants.REDIS_MOBILE_CODE_EXPIRE, TimeUnit.SECONDS);
         return R.success(code);

@@ -5,7 +5,11 @@ import com.y3tu.tool.core.exception.IError;
 import com.y3tu.tool.core.exception.SystemException;
 
 /**
- * 请求头信息错误异常
+ *功能描述 :请求头信息错误异常
+ * @author zht
+ * @date 2019/12/23
+ * @param
+ * @return
  */
 public class ErrorSignException extends SystemException {
     public ErrorSignException() {

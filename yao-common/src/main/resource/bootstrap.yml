@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: common-server
+  cloud:
+    nacos:
+      config:
+       server-addr: nacos.91xft.cn:80
+       file-extension: yml
+       group: COMMON_GROUP
+       namespace: a4c99aa2-4d11-4c42-8791-9181a9dcec8a
+  profiles:
+    active: dev
+  main:
+    allow-bean-definition-overriding: true
+

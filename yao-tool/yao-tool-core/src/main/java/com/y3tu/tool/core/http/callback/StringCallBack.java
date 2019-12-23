@@ -7,9 +7,11 @@ import okhttp3.Response;
 import java.io.IOException;
 
 /**
- * 处理字符串回调
+ *功能描述 :处理字符串回调
+ * @author zht
+ * @date 2019/12/23
  */
-public class StringCallBack extends CallBack<String> {
+public class StringCallBack extends AbstractCallBack<String> {
 
 
     @Override
@@ -18,7 +20,7 @@ public class StringCallBack extends CallBack<String> {
     }
 
     @Override
-    public void onResponse(Call call, Response response) throws IOException {
+    public void onResponse(Call call, Response response) {
         onParseResponse(call, response);
     }
 
@@ -26,9 +28,8 @@ public class StringCallBack extends CallBack<String> {
     public String onParseResponse(Call call, Response response) {
         try {
             return response.body().string();
-        } catch (IOException e) {
-            new RuntimeException("failure");
-            return "";
+        } catch (Exception e) {
+            throw new RuntimeException("failure");
         }
     }
 }

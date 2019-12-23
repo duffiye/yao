@@ -13,7 +13,6 @@ import java.util.Base64;
  * @author zht
  */
 public class SignUtil {
-    private final static String secretKey = "ndE2jdZNFixH9G6Aidsfyf7lYT3PxW";
 
     /**
      * @Author : zht
@@ -26,12 +25,12 @@ public class SignUtil {
         String bodyString = "{\"page_num\":1,\"page_size\":10,\"root\":{\"child\":{\"test\":1}}}";
         //指定字符集UTF-8
         String characterEncoding = "UTF-8";
-        String mySign = createSign(characterEncoding, timestamp, nonce, bodyString);
-        System.out.println(mySign);
+        //String mySign = createSign(characterEncoding, timestamp, nonce, bodyString);
+        //System.out.println(mySign);
     }
 
 
-    public static String createSign(String characterEncoding, String timestamp, String nonce, String bodyString) {
+    public static String createSign(String characterEncoding, String timestamp, String nonce, String bodyString, String secretKey) {
         //把参数做MD5加密
         String signValue = encryptWithMD5(timestamp + nonce + bodyString, characterEncoding).toUpperCase();
         //使用私钥经SHA256签名算法生成签名值

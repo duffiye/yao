@@ -1,7 +1,7 @@
 package com.y3tu.tool.core.http;
 
 import com.y3tu.tool.core.exception.ToolException;
-import com.y3tu.tool.core.http.callback.CallBack;
+import com.y3tu.tool.core.http.callback.AbstractCallBack;
 import com.y3tu.tool.core.util.StrUtil;
 import lombok.Data;
 import okhttp3.*;
@@ -63,7 +63,7 @@ public class OkHttpUtil {
     /**
      * 回调接口
      */
-    private CallBack callBack;
+    private AbstractCallBack abstractCallBack;
     /**
      * OKhttpClient对象
      */
@@ -85,27 +85,27 @@ public class OkHttpUtil {
      */
     private int readTimeout = 0;
 
-    OkHttpUtil(String methodType, String url, Map<String, String> paramsMap, Map<String, String> headerMap, CallBack callBack) {
-        this(methodType, url, null, null, null, null, null, null, paramsMap, headerMap, callBack);
+    OkHttpUtil(String methodType, String url, Map<String, String> paramsMap, Map<String, String> headerMap, AbstractCallBack abstractCallBack) {
+        this(methodType, url, null, null, null, null, null, null, paramsMap, headerMap, abstractCallBack);
     }
 
-    OkHttpUtil(String methodType, String url, String jsonStr, Map<String, String> headerMap, CallBack callBack) {
-        this(methodType, url, jsonStr, null, null, null, null, null, null, headerMap, callBack);
+    OkHttpUtil(String methodType, String url, String jsonStr, Map<String, String> headerMap, AbstractCallBack abstractCallBack) {
+        this(methodType, url, jsonStr, null, null, null, null, null, null, headerMap, abstractCallBack);
     }
 
-    OkHttpUtil(String methodType, String url, Map<String, String> paramsMap, File file, String fileKey, String fileType, Map<String, String> headerMap, CallBack callBack) {
-        this(methodType, url, null, file, null, fileKey, null, fileType, paramsMap, headerMap, callBack);
+    OkHttpUtil(String methodType, String url, Map<String, String> paramsMap, File file, String fileKey, String fileType, Map<String, String> headerMap, AbstractCallBack abstractCallBack) {
+        this(methodType, url, null, file, null, fileKey, null, fileType, paramsMap, headerMap, abstractCallBack);
     }
 
-    OkHttpUtil(String methodType, String url, Map<String, String> paramsMap, List<File> fileList, String fileKey, String fileType, Map<String, String> headerMap, CallBack callBack) {
-        this(methodType, url, null, null, fileList, fileKey, null, fileType, paramsMap, headerMap, callBack);
+    OkHttpUtil(String methodType, String url, Map<String, String> paramsMap, List<File> fileList, String fileKey, String fileType, Map<String, String> headerMap, AbstractCallBack abstractCallBack) {
+        this(methodType, url, null, null, fileList, fileKey, null, fileType, paramsMap, headerMap, abstractCallBack);
     }
 
-    OkHttpUtil(String methodType, String url, Map<String, String> paramsMap, Map<String, File> fileMap, String fileType, Map<String, String> headerMap, CallBack callBack) {
-        this(methodType, url, null, null, null, null, fileMap, fileType, paramsMap, headerMap, callBack);
+    OkHttpUtil(String methodType, String url, Map<String, String> paramsMap, Map<String, File> fileMap, String fileType, Map<String, String> headerMap, AbstractCallBack abstractCallBack) {
+        this(methodType, url, null, null, null, null, fileMap, fileType, paramsMap, headerMap, abstractCallBack);
     }
 
-    private OkHttpUtil(String methodType, String url, String jsonStr, File file, List<File> fileList, String fileKey, Map<String, File> fileMap, String fileType, Map<String, String> paramsMap, Map<String, String> headerMap, CallBack callBack) {
+    private OkHttpUtil(String methodType, String url, String jsonStr, File file, List<File> fileList, String fileKey, Map<String, File> fileMap, String fileType, Map<String, String> paramsMap, Map<String, String> headerMap, AbstractCallBack abstractCallBack) {
         this.methodType = methodType;
         this.url = url;
         this.jsonStr = jsonStr;
@@ -116,7 +116,7 @@ public class OkHttpUtil {
         this.fileType = fileType;
         this.paramsMap = paramsMap;
         this.headerMap = headerMap;
-        this.callBack = callBack;
+        this.abstractCallBack = abstractCallBack;
         getInstance();
     }
 
@@ -230,7 +230,7 @@ public class OkHttpUtil {
         if (file != null && file.exists()) {
             MediaType fileType = MediaType.parse(this.fileType);
             RequestBody body = RequestBody.create(fileType, file);
-            requestBuilder.post(new ProgressRequestBody(body, callBack));
+            requestBuilder.post(new ProgressRequestBody(body, abstractCallBack));
         }
     }
 
@@ -245,7 +245,7 @@ public class OkHttpUtil {
                 builder.addFormDataPart(key, paramsMap.get(key));
             }
             builder.addFormDataPart(fileKey, file.getName(), RequestBody.create(MediaType.parse(fileType), file));
-            requestBuilder.post(new ProgressRequestBody(builder.build(), callBack));
+            requestBuilder.post(new ProgressRequestBody(builder.build(), abstractCallBack));
         }
     }
 
@@ -306,15 +306,15 @@ public class OkHttpUtil {
         okHttpClient.newCall(okHttpRequest).enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, final IOException e) {
-                if (callBack != null) {
-                    callBack.onFailure(call, e);
+                if (abstractCallBack != null) {
+                    abstractCallBack.onFailure(call, e);
                 }
             }
 
             @Override
             public void onResponse(final Call call, final Response response) throws IOException {
-                if (callBack != null) {
-                    callBack.onResponse(call, response);
+                if (abstractCallBack != null) {
+                    abstractCallBack.onResponse(call, response);
                 }
             }
 
@@ -344,11 +344,11 @@ public class OkHttpUtil {
          * 包装完成的BufferedSink
          */
         private BufferedSink bufferedSink;
-        private CallBack callBack;
+        private AbstractCallBack abstractCallBack;
 
-        ProgressRequestBody(RequestBody requestBody, CallBack callBack) {
+        ProgressRequestBody(RequestBody requestBody, AbstractCallBack abstractCallBack) {
             this.requestBody = requestBody;
-            this.callBack = callBack;
+            this.abstractCallBack = abstractCallBack;
         }
 
         /**

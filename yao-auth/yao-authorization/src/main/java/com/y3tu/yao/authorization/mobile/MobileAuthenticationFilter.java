@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.alibaba.nacos.common.util.HttpMethod.POST;
+
+
 /**
  * 手机验证码登录filter
  * @author y3tu
@@ -25,7 +28,7 @@ public class MobileAuthenticationFilter extends AbstractAuthenticationProcessing
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
-        if (postOnly && !request.getMethod().equals("POST")) {
+        if (postOnly && !POST.equals(request.getMethod())) {
             throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
         }
 
