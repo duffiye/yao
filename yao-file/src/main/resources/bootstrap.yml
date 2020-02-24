@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: file-server
+  cloud:
+    nacos:
+      config:
+       server-addr: nacos.91xft.cn:80
+       file-extension: yml
+       group: FILE_GROUP
+       namespace: a4c99aa2-4d11-4c42-8791-9181a9dcec8a
+  profiles:
+    active: dev
+  main:
+    allow-bean-definition-overriding: true
+
+minio:
+  endpoint: https://file.91xft.cn:9001
+  access-key: Y54ZrN3xqBhe2JDub1wd
+  secret-key: 2fa0XOECBTWpc1FPuBPZfR6fmoMFQvyfDFPA
+
+logging:
+  level:
+    com.y3tu.yao.file.mapper: debug

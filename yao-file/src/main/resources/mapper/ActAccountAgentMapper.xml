@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.y3tu.yao.file.mapper.ActAccountAgentMapper">
+
+    <select id="selectLicensePhotoUrl" resultType="java.lang.String">
+      SELECT license_photo_url FROM act_account_agent;
+    </select>
+
+
+    <select id="selectOpenAcctPhotoUrl" resultType="java.lang.String">
+        SELECT open_acct_photo_url FROM act_account_agent;
+    </select>
+
+
+    <select id="selectLegalIdFrontUrl" resultType="java.lang.String">
+        SELECT legal_id_front_url FROM act_account_agent;
+    </select>
+
+
+    <select id="selectLegalIdBackUrl" resultType="java.lang.String">
+        SELECT legal_id_back_url FROM act_account_agent;
+    </select>
+
+
+    <select id="selectTransactorIdFrontUrl" resultType="java.lang.String">
+        SELECT transactor_id_front_url FROM act_account_agent;
+    </select>
+
+
+    <select id="selectTransactorIdBackUrl" resultType="java.lang.String">
+        SELECT transactor_id_back_url FROM act_account_agent;
+    </select>
+</mapper>

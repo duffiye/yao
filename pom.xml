@@ -17,6 +17,7 @@
         <module>yao-feign</module>
         <module>yao-tool</module>
         <module>yao-upms</module>
+        <module>yao-file</module>
     </modules>
 
     <parent>
